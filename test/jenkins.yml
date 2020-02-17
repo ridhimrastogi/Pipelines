@@ -1,0 +1,7 @@
+- group:
+    description: "Basic checks for dependencies"
+    checks:
+      - availability:
+          port: 9000
+          status: 200
+          url: /
