@@ -48,7 +48,7 @@ async function run(privateKey) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    result = sshSync('/bakerx/pipeline/server-init.sh', 'vagrant@192.168.33.10');
+    result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.10');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
 }
