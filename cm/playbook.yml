@@ -7,4 +7,4 @@
   roles:
     - ping
     - install-jenkins
-    # - checkio-setup
+    - checkio-setup
