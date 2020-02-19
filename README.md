@@ -8,4 +8,4 @@ Steps to run:
 
 To run the setup command: ```pipeline setup```
 
-To run the playbook command: ``` pipeline playbook pipeline/playbook.yml pipeline/inventory.ini ```
+To run the playbook command: ``` pipeline playbook cm/playbook.yml cm/inventory.ini ```
