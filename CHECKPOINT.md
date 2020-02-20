@@ -7,6 +7,10 @@
     - Creating Jenkins server
     - Setting up top level commands
 2. Installing Jenkins
+3. Configure Build Server
+    - Install Mongodb
+    - Configure Mongodb
+    - Install NodeJS
 
 
 ## Upcoming tasks
