@@ -20,4 +20,4 @@
  
 ## Project board
 
-![](images/checkpoint1.png)
+![](images/Checkpoint1.png)
