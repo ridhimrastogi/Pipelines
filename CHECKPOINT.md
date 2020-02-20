@@ -18,3 +18,6 @@
 1. Configuring Jenkins
 2. Writing Jenkins job to build checkbox.io
  
+## Project board
+
+![](images/checkpoint1.png)
