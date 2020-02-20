@@ -1,0 +1,29 @@
+---
+- name: Install mongo support
+  pip:
+    name: pymongo
+    executable: pip3
+  become: yes
+
+- name: Copy mongodb.conf
+  copy:
+    src: /bakerx/cm/mongodb.conf
+    dest: /etc/mongodb.conf      
+  become: yes
+
+- name: Reload daemon, start mongodb service, and enable as system service on boot.
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: mongodb
+    enabled: yes
+  become: yes
+
+- name: Create MongoDB root user siteRootAdmin
+  mongodb_user:
+    login_port: "27012"
+    database: "admin"
+    name: mongodb_admin_user
+    password: "{{ default_user_pwd }}"
+    roles: "root"
+  become: yes

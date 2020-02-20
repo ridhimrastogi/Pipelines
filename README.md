@@ -7,5 +7,11 @@ Steps to run:
 3. Run ```npm link```
 
 To run the setup command: ```pipeline setup```
+Enter ```12345678``` for Vault password (This is for demeonstration purposes only)
 
-To run the playbook command: ``` pipeline playbook pipeline/playbook.yml pipeline/inventory.ini ```
+To run the playbook command: ``` pipeline playbook cm/playbook.yml cm/inventory.ini ```
+
+
+# CHECKPOINTS
+
+[Checkpoint 1](/CHECKPOINT.md)
