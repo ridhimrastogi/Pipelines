@@ -10,4 +10,5 @@
     - configure-jenkins
     - build_srv_setup
     - mongo-setup
-    
+    - jenkins-job-builder
+

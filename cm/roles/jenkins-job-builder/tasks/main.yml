@@ -1,0 +1,12 @@
+---
+    - name: add jenkins-job-builder
+      apt:
+        name: jenkins-job-builder
+        state: latest
+      become: yes
+
+    - name: add jq
+      apt:
+        name: jq
+        state: latest
+      become: yes

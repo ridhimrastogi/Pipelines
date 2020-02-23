@@ -1,0 +1,32 @@
+- job:
+    name: checkbox.io
+    project-type: pipeline
+    dsl: |
+        pipeline {
+            agent any
+
+            stages {
+                stage('cloning repo ... ') {
+                    steps {
+                        git 'https://github.com/chrisparnin/checkbox.io.git'
+                    }
+                }
+
+                stage('build'){
+                    steps{
+                        sh "cd server-side/site && npm install"
+                        sh "cd server-side/site && pm2 start server.js"
+                    }
+                }
+                stage('test'){
+                    steps{
+                        sh "cd server-side/site && npm test"
+                    }
+                }
+            }
+            post{
+                always{
+                    sh "cd server-side/site && pm2 stop server.js"
+                }
+            }
+        }
