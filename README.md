@@ -7,7 +7,7 @@ Steps to run:
 3. Run ```npm link```
 
 To run the setup command: ```pipeline setup```
-Enter ```12345678``` for Vault password (This is for demeonstration purposes only)
+Enter ```12345678``` for Vault password (This is for demonstration purposes only)
 
 
 # CHECKPOINTS
