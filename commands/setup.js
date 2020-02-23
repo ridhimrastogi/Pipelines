@@ -2,6 +2,7 @@ const child = require('child_process');
 const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
@@ -50,5 +51,14 @@ async function run(privateKey) {
     console.log(chalk.blueBright('Running init script...'));
     result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.10');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    // the paths should be from root of cm directory
+    // Transforming path of the files in host to the path in VM's shared folder
+    let filePath = '/bakerx/' + 'cm/playbook.yml';
+    let inventoryPath = '/bakerx/' + 'cm/inventory.ini';
+
+    console.log(chalk.blueBright('Running ansible playbook script...'));
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
+    if( result.error ) { process.exit( result.status ); }
 
 }
