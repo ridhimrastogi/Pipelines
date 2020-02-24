@@ -1,3 +1,14 @@
+- name: Create initialization scripts directory
+  become: yes
+  file: path=/var/lib/jenkins/init.groovy.d
+        state=directory
+        mode=0775
+
+- name: Add initialization script to setup basic security
+  become: yes
+  template: src=basic-security.groovy
+            dest=/var/lib/jenkins/init.groovy.d/basic-security.groovy
+
 - name: Set Jenkins server port to 9000.
   become: yes
   lineinfile:
@@ -8,3 +19,34 @@
 - name: Restart Jenkins server.
   become: yes
   command: service jenkins restart
+
+- name: Turnoff Jenkins setup wizard.
+  become: yes
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+
+- name: Restart Jenkins server.
+  become: yes
+  command: service jenkins restart
+
+# - name: Disabling CSRF setting.
+#   set_fact:
+#     disable_CSRF: |
+#         import jenkins.model.Jenkins
+
+#         def instance = Jenkins.instance
+#         instance.setCrumbIssuer(null)
+#         instance.save()
+
+# - name: Run disable CSRF script
+#   jenkins_script:
+#     script: "{{ disable_CSRF }}"
+#     user: admin
+#     password: admin
+#     url: http://192.168.33.20:9000
+
+# - name: Restart Jenkins server.
+#   become: yes
+#   command: service jenkins restart
