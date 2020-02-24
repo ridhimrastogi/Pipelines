@@ -31,6 +31,76 @@
   become: yes
   command: service jenkins restart
 
+- name: Wait for Jenkins to start up
+  uri:
+    url: http://192.168.33.20:9000
+    status_code: 200
+    timeout: 5
+  register: jenkins_service_status
+  # Keep trying for 5 mins in 5 sec intervals
+  retries: 60
+  delay: 5
+  until: >
+     'status' in jenkins_service_status and
+     jenkins_service_status['status'] == 200
+
+- name: Install build-pipeline-plugin.
+  jenkins_plugin:
+    name: build-pipeline-plugin
+    with_dependencies: yes
+    state: latest
+    url: http://192.168.33.20:9000
+    url_username: admin
+    url_password: admin
+
+- name: Wait for Jenkins to start up
+  uri:
+    url: http://192.168.33.20:9000
+    status_code: 200
+    timeout: 5
+  register: jenkins_service_status
+  # Keep trying for 5 mins in 5 sec intervals
+  retries: 60
+  delay: 5
+  until: >
+     'status' in jenkins_service_status and
+     jenkins_service_status['status'] == 200
+
+- name: Install workflow-aggregator plugin.
+  jenkins_plugin:
+    name: workflow-aggregator
+    with_dependencies: yes
+    state: latest
+    url: http://192.168.33.20:9000
+    url_username: admin
+    url_password: admin
+
+- name: Wait for Jenkins to start up
+  uri:
+    url: http://192.168.33.20:9000
+    status_code: 200
+    timeout: 5
+  register: jenkins_service_status
+  # Keep trying for 5 mins in 5 sec intervals
+  retries: 60
+  delay: 5
+  until: >
+     'status' in jenkins_service_status and
+     jenkins_service_status['status'] == 200
+
+- name: Install pipeline-github plugin.
+  jenkins_plugin:
+    name: pipeline-github
+    with_dependencies: yes
+    state: latest
+    url: http://192.168.33.20:9000
+    url_username: admin
+    url_password: admin
+
+- name: Restart Jenkins server.
+  become: yes
+  command: service jenkins restart
+
 # - name: Disabling CSRF setting.
 #   set_fact:
 #     disable_CSRF: |
