@@ -11,6 +11,7 @@
     - Install Mongodb
     - Configure Mongodb
     - Install NodeJS
+    - modified ansible_vault to supply password automatically (for demonstration only.)
 
 
 ## Upcoming tasks
