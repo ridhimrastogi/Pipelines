@@ -36,3 +36,7 @@
 
 1. Fix authentication issue during jenkins configuration
 2. Investigate failure of 1 test in npm test.
+
+## Project board
+
+![](images/Checkpoint2.png)
