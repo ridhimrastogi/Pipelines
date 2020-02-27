@@ -14,6 +14,7 @@
 
                 stage('build'){
                     steps{
+                        sh "sudo systemctl start mongodb"
                         sh "cd server-side/site && npm install"
                         sh "cd server-side/site && pm2 start server.js"
                     }

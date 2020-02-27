@@ -10,3 +10,20 @@
         name: jq
         state: latest
       become: yes
+
+    - name: populate /etc/environment
+      lineinfile:
+        dest: "/etc/environment"
+        state: present
+        regexp: "^{{ item.key }}="
+        line: "{{ item.key }}={{ item.value}}"
+      with_items: "{{ os_environment }}"
+      become: yes
+
+    - name: add jenkins user to sudoers file
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        insertafter: "^%sudo   ALL="
+        line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+      become: yes
