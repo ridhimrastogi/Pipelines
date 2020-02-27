@@ -24,6 +24,6 @@
       lineinfile:
         dest: /etc/sudoers
         state: present
-        insertafter: "^%sudo   ALL="
+        insertbefore: "# See sudoers"
         line: "jenkins ALL=(ALL) NOPASSWD: ALL"
       become: yes
