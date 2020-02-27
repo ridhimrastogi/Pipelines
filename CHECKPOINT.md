@@ -11,6 +11,7 @@
     - Install Mongodb
     - Configure Mongodb
     - Install NodeJS
+    - modified ansible_vault to supply password automatically (for demonstration only.)
 
 
 ## Upcoming tasks
@@ -21,3 +22,17 @@
 ## Project board
 
 ![](images/Checkpoint1.png)
+
+# Checkpoint 2
+
+## Tasks completed
+
+1. Writing Jenkins pipeline
+2. Adding code to trigger jenkins pipeline using jenkins-jobs
+3. Fetching build logs
+4. Configuring Jenkins
+
+## Upcoming tasks
+
+1. Fix authentication issue during jenkins configuration
+2. Investigate failure of 1 test in npm test.
