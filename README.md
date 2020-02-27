@@ -13,4 +13,4 @@ To start build for checkbox.io use command: ```pipeline build checkbox.io```
 
 # CHECKPOINTS
 
-[Checkpoint 1](/CHECKPOINT.md)
+[Checkpoints](/CHECKPOINT.md)
