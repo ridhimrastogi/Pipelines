@@ -5,10 +5,9 @@
 - hosts: jenkins
   gather_facts: no  
   roles:
-    - ping
-    - install-jenkins
-    - configure-jenkins
-    - build_srv_setup
-    - mongo-setup
+    - ping   
+    - build_srv_setup   
+    - configure-mongodb
+    - configure-jenkins    
     - jenkins-job-builder
 

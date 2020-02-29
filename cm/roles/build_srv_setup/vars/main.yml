@@ -5,6 +5,3 @@ packages:
   - mongodb
   - nodejs
 
-dependant_packages:
-  - npm
-
