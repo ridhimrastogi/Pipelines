@@ -55,7 +55,7 @@
     state: latest
     url: http://192.168.33.20:9000
     url_username: admin
-    url_password: admin
+    url_password: "{{ jenkins_default_pwd }}"
 
 - name: Restart Jenkins if required
   service:
@@ -83,7 +83,7 @@
     state: latest
     url: http://192.168.33.20:9000
     url_username: admin
-    url_password: admin
+    url_password: "{{ jenkins_default_pwd }}"
 
 - name: Restart Jenkins if required
   service:
@@ -111,7 +111,7 @@
     state: latest
     url: http://192.168.33.20:9000
     url_username: admin
-    url_password: admin
+    url_password: "{{ jenkins_default_pwd }}"
 
 - name: Restart Jenkins if required
   service:
