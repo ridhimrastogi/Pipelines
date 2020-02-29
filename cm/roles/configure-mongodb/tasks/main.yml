@@ -1,10 +1,4 @@
 ---
-- name: Install mongo support
-  pip:
-    name: pymongo
-    executable: pip3
-  become: yes
-
 - name: Copy mongodb.conf
   copy:
     src: /bakerx/cm/mongodb.conf

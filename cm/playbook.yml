@@ -5,12 +5,9 @@
 - hosts: jenkins
   gather_facts: no  
   roles:
-    - ping
-    - install-jenkins
-    - configure-jenkins
-    - build_srv_setup
-    - role: mongo-setup
-      vars:
-      - ansible_python_interpreter: python3
+    - ping   
+    - build_srv_setup   
+    - configure-mongodb
+    - configure-jenkins    
     - jenkins-job-builder
 
