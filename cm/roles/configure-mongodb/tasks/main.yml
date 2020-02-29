@@ -15,9 +15,9 @@
 
 - name: Create MongoDB root user siteRootAdmin
   mongodb_user:
-    login_port: "27012"
     database: "admin"
     name: mongodb_admin_user
     password: "{{ default_user_pwd }}"
-    roles: "root"
+    roles: userAdmin
+    state: present
   become: yes

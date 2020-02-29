@@ -16,9 +16,11 @@
     regexp: '^HTTP_PORT='
     line: HTTP_PORT=9000
 
-- name: Restart Jenkins server.
+- name: Restart Jenkins if required
+  service:
+    name: jenkins
+    state: restarted
   become: yes
-  command: service jenkins restart
 
 - name: Turnoff Jenkins setup wizard.
   become: yes
@@ -27,9 +29,11 @@
     regexp: '^JAVA_ARGS='
     line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
 
-- name: Restart Jenkins server.
+- name: Restart Jenkins if required
+  service:
+    name: jenkins
+    state: restarted
   become: yes
-  command: service jenkins restart
 
 - name: Wait for Jenkins to start up
   uri:
@@ -53,6 +57,12 @@
     url_username: admin
     url_password: admin
 
+- name: Restart Jenkins if required
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
+
 - name: Wait for Jenkins to start up
   uri:
     url: http://192.168.33.20:9000
@@ -74,6 +84,12 @@
     url: http://192.168.33.20:9000
     url_username: admin
     url_password: admin
+
+- name: Restart Jenkins if required
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
 
 - name: Wait for Jenkins to start up
   uri:
@@ -97,26 +113,8 @@
     url_username: admin
     url_password: admin
 
-- name: Restart Jenkins server.
+- name: Restart Jenkins if required
+  service:
+    name: jenkins
+    state: restarted
   become: yes
-  command: service jenkins restart
-
-# - name: Disabling CSRF setting.
-#   set_fact:
-#     disable_CSRF: |
-#         import jenkins.model.Jenkins
-
-#         def instance = Jenkins.instance
-#         instance.setCrumbIssuer(null)
-#         instance.save()
-
-# - name: Run disable CSRF script
-#   jenkins_script:
-#     script: "{{ disable_CSRF }}"
-#     user: admin
-#     password: admin
-#     url: http://192.168.33.20:9000
-
-# - name: Restart Jenkins server.
-#   become: yes
-#   command: service jenkins restart

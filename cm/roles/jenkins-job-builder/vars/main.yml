@@ -1,0 +1,11 @@
+os_environment:
+    - key: APP_PORT
+      value : 3002
+    - key: MONGO_PORT
+      value : 27017
+    - key: MONGO_USER
+      value : mongodb_admin_user
+    - key: MONGO_PASSWORD
+      value : "{{ default_user_pwd }}"
+    - key: MONGO_IP
+      value : localhost
