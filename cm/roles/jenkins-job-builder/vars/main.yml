@@ -8,4 +8,4 @@ os_environment:
     - key: MONGO_PASSWORD
       value : "{{ default_user_pwd }}"
     - key: MONGO_IP
-      value : localhost
+      value : "localhost"

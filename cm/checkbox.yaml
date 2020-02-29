@@ -11,10 +11,13 @@
                         git 'https://github.com/chrisparnin/checkbox.io.git'
                     }
                 }
-
+                stage('pre build') {
+                    steps {
+                        sh "sudo systemctl restart mongodb"
+                    }
+                }
                 stage('build'){
                     steps{
-                        sh "sudo systemctl start mongodb"
                         sh "cd server-side/site && npm install"
                         sh "cd server-side/site && pm2 start server.js"
                     }
@@ -27,7 +30,7 @@
             }
             post{
                 always{
-                    sh "cd server-side/site && pm2 stop server.js"
+                    sh "cd server-side/site && pm2 stop server"
                 }
             }
         }
