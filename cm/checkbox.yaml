@@ -13,7 +13,7 @@
                 }
                 stage('pre build') {
                     steps {
-                        sh "sudo systemctl restart mongodb"
+                        sh "sudo systemctl start mongodb"
                     }
                 }
                 stage('build'){
