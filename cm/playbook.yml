@@ -7,7 +7,9 @@
   roles:
     - ping   
     - build_srv_setup   
-    - configure-mongodb
+    - role: configure-mongodb
+      vars:
+        ansible_python_interpreter: python3
     - configure-jenkins    
     - jenkins-job-builder
 
