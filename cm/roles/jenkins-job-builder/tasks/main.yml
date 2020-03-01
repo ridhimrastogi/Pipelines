@@ -20,10 +20,8 @@
       with_items: "{{ os_environment }}"
       become: yes
 
-    - name: add jenkins user to sudoers file
-      lineinfile:
-        dest: /etc/sudoers
-        state: present
-        insertbefore: "# See sudoers"
-        line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+    - name: Add the user 'jenkins' to group of 'vagrant'
+      user:
+        name: jenkins
+        group: vagrant
       become: yes
