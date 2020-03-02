@@ -31,5 +31,6 @@
     - name: Add the user 'jenkins' to group of 'vagrant'
       user:
         name: jenkins
-        group: vagrant
+        groups: root,vagrant
+        append: yes
       become: yes
