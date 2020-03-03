@@ -11,6 +11,11 @@
                         git 'https://github.com/chrisparnin/checkbox.io.git'
                     }
                 }
+                stage('printing environment variables') {
+                    steps {
+                        sh "printenv"
+                    }
+                }
                 stage('pre build') {
                     steps {
                         sh "sudo systemctl start mongodb"

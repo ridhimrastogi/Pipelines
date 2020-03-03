@@ -6,10 +6,11 @@
   gather_facts: no  
   roles:
     - ping   
+    - jenkins-job-builder
     - build_srv_setup   
     - role: configure-mongodb
       vars:
         ansible_python_interpreter: python3
     - configure-jenkins    
-    - jenkins-job-builder
+    
 
