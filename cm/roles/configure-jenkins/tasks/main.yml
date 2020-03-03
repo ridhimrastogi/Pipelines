@@ -56,6 +56,11 @@
     url: http://192.168.33.20:9000
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
+    timeout: 60
+  register: install_res
+  until: install_res is not failed
+  retries: 5
+  delay: 5
 
 - name: Restart Jenkins if required
   service:
@@ -84,6 +89,11 @@
     url: http://192.168.33.20:9000
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
+    timeout: 60
+  register: install_res
+  until: install_res is not failed
+  retries: 5
+  delay: 5
 
 - name: Restart Jenkins if required
   service:
@@ -112,6 +122,11 @@
     url: http://192.168.33.20:9000
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
+    timeout: 60
+  register: install_res
+  until: install_res is not failed
+  retries: 5
+  delay: 5
 
 - name: Restart Jenkins if required
   service:
