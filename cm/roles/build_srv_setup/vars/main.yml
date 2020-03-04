@@ -1,9 +1,0 @@
----
-packages:
-  - python3-pip
-  - openjdk-8-jdk
-  - mongodb
-  - nodejs
-  - jenkins-job-builder
-  - jq
-

@@ -1,3 +1,12 @@
+---
+packages:
+  - python3-pip
+  - openjdk-8-jdk
+  - mongodb
+  - nodejs
+  - jenkins-job-builder
+  - jq
+
 os_environment:
     - key: APP_PORT
       value : 3002
@@ -9,3 +18,4 @@ os_environment:
       value : "{{ default_user_pwd }}"
     - key: MONGO_IP
       value : "localhost"
+
