@@ -64,7 +64,7 @@
     timeout: 60
   register: install_res
   until: install_res is not failed
-  retries: 5
+  retries: 10
   delay: 5
   notify:
     - restart jenkins
@@ -100,7 +100,7 @@
     timeout: 60
   register: install_res
   until: install_res is not failed
-  retries: 5
+  retries: 10
   delay: 5
   notify:
     - restart jenkins
@@ -136,7 +136,7 @@
     timeout: 60
   register: install_res
   until: install_res is not failed
-  retries: 5
+  retries: 10
   delay: 5
   notify:
     - restart jenkins
