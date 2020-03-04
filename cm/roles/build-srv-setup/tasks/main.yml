@@ -14,7 +14,7 @@
     regexp: "^{{ item.key }}="
     line: "{{ item.key }}={{ item.value}}"
   with_items: "{{ os_environment }}"
-  become: true
+  become: yes
 
 - name: Update and upgrade apt packages.
   apt:
