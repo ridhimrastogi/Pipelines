@@ -23,7 +23,7 @@ Following are some of our team's experiences and issues faced during the course 
 ```instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)```
 <br>Also we had to edit the /etc/default/jenkins with the following:<br>
 ```JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false```
-- **Jenkins Plugin Installation:** While configuring the Jenkins server, we needed some plugins for the jenkins build job to be triggred as part of the project narrative. During installation of these plugins the jenkins server was required to be restarted and hence we had to add wait and retries as part of the ansible tasks so as to enforce successful installation of the plugins.
+- **Jenkins Plugin Installation:** While configuring the Jenkins server, we needed some plugins for the jenkins build job to be triggred as part of the project narrative. Installation of Jenkins plugins via UI is a piece of cake, it just takes a single click. But during the installation of these plugins via Ansible tasks, we encountered several kinds of task failures. So in order to overcome these task failures and enforce the successful installation of the plugins we had to add handlers of jenkins server restart and wait for jenkins to be up and running, we also had to add ansible task retires.
 - **Checking Build Status:** Typically, the build status is available on the jenkins UI, but for the project we had to print the build console output logs on the terminal. In order to accomplish this task we had to parse the result of the curl request used for polling the build status using "jq-command line json processor". We had also considered using python's json module to parse the API response.
 
 # SCREENCAST
