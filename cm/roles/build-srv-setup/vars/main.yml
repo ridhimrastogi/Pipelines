@@ -6,6 +6,7 @@ packages:
   - nodejs
   - jenkins-job-builder
   - jq
+  - nginx
 
 os_environment:
     - key: APP_PORT

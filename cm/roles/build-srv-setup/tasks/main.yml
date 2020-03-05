@@ -59,6 +59,12 @@
     update_cache: yes
   become: yes
 
+- name: start nginx 
+  service:
+    name: nginx
+    state: started
+  become: yes
+
 - name: Install PM2.
   npm:
     name: pm2
