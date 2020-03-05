@@ -19,7 +19,7 @@ To start build for checkbox.io use command: ```pipeline build checkbox.io```
 Following are some of our team's experiences and issues faced during the course of this milestone:
 
 - **Setting Environment Variables:** This was one of the major issue faced by our team. We encountered this problem when one of our test case started failing during the pipeline build job pertaining to the checkbox.io application. This test case wasn't failing when we were trying to run the ```npm test``` command manually on the server. Later, we were able to figure out the root cause for this test fail, it was because the environment varibale were needed to be set before the installation of jenkins so that the environment variables get configured for the same.  
-- **Disable Setup Wizard:** We had to disable the setup wizard so that jenkins installation steps could be completed using commands fired using Ansible and not the Jenkins UI. So for this we had to add the following code to the initialization script(groovy):<br>
+- **Disable Setup Wizard:** We had to disable the setup wizard so that jenkins installation steps could be completed using commands fired via Ansible and not the Jenkins UI. So for this we had to add the following code to the initialization script(groovy):<br>
 ```instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)```
 <br>Also we had to edit the /etc/default/jenkins with the following:<br>
 ```JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false```
