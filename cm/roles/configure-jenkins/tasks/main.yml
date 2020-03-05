@@ -15,14 +15,6 @@
     path: /etc/default/jenkins
     regexp: '^HTTP_PORT='
     line: HTTP_PORT=9000
-  # notify: 
-  #   - restart jenkins
-
-# - name: Restart Jenkins if required
-#   service:
-#     name: jenkins
-#     state: restarted
-#   become: yes
 
 - name: Turnoff Jenkins setup wizard.
   become: yes
@@ -39,19 +31,6 @@
     name: jenkins
     state: restarted
   become: yes
-
-# - name: Wait for Jenkins to start up
-#   uri:
-#     url: http://192.168.33.20:9000
-#     status_code: 200
-#     timeout: 5
-#   register: jenkins_service_status
-#   # Keep trying for 5 mins in 5 sec intervals
-#   retries: 60
-#   delay: 5
-#   until: >
-#      'status' in jenkins_service_status and
-#      jenkins_service_status['status'] == 200
 
 - name: Install build-pipeline-plugin.
   jenkins_plugin:
@@ -70,25 +49,6 @@
     - restart jenkins
     - wait for jenkins
 
-# - name: Restart Jenkins if required
-#   service:
-#     name: jenkins
-#     state: restarted
-#   become: yes
-
-# - name: Wait for Jenkins to start up
-#   uri:
-#     url: http://192.168.33.20:9000
-#     status_code: 200
-#     timeout: 5
-#   register: jenkins_service_status
-#   # Keep trying for 5 mins in 5 sec intervals
-#   retries: 60
-#   delay: 5
-#   until: >
-#      'status' in jenkins_service_status and
-#      jenkins_service_status['status'] == 200
-
 - name: Install workflow-aggregator plugin.
   jenkins_plugin:
     name: workflow-aggregator
@@ -106,25 +66,6 @@
     - restart jenkins
     - wait for jenkins
 
-# - name: Restart Jenkins if required
-#   service:
-#     name: jenkins
-#     state: restarted
-#   become: yes
-
-# - name: Wait for Jenkins to start up
-#   uri:
-#     url: http://192.168.33.20:9000
-#     status_code: 200
-#     timeout: 5
-#   register: jenkins_service_status
-#   # Keep trying for 5 mins in 5 sec intervals
-#   retries: 60
-#   delay: 5
-#   until: >
-#      'status' in jenkins_service_status and
-#      jenkins_service_status['status'] == 200
-
 - name: Install pipeline-github plugin.
   jenkins_plugin:
     name: pipeline-github
@@ -140,9 +81,3 @@
   delay: 5
   notify:
     - restart jenkins
-
-# - name: Restart Jenkins if required
-#   service:
-#     name: jenkins
-#     state: restarted
-#   become: yes

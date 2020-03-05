@@ -16,11 +16,6 @@ def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 instance.setAuthorizationStrategy(strategy)
 instance.setCrumbIssuer(null)
 
-// if (!instance.installState.isSetupComplete()) {
-//   println '--> Neutering SetupWizard'
-//   InstallState.INITIAL_SETUP_COMPLETED.initializeState()
-// }
-
 instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)
 
 instance.save()
