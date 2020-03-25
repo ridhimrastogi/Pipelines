@@ -15,24 +15,32 @@ exports.builder = yargs => {
             describe: 'Install the provided private key on the configuration server',
             type: 'string'
         }
+    }).positional('gh-user', {
+        alias: 'gh_user',
+        describe: 'user name',
+        type: 'string',
+        nargs: 1
+    }).positional('gh-pass', {
+        alias: 'gh_pass',
+        describe: 'user password',
+        type: 'string',
+        nargs: 1
     });
 };
 
 
 exports.handler = async argv => {
-    const { privateKey } = argv;
+    const { privateKey, gh_user, gh_pass } = argv;
 
     (async () => {
 
-        await run( privateKey );
+        await run( privateKey, gh_user, gh_pass );
 
     })();
 
 };
 
-async function run(privateKey) {
-
-    console.log(chalk.greenBright('Installing configuration server!'));
+async function run(privateKey, gh_user, gh_pass) {
 
     console.log(chalk.blueBright('Provisioning configuration server...'));
     let result = child.spawnSync(`bakerx`, `run ansible-srv bionic --ip 192.168.33.10 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
@@ -49,7 +57,9 @@ async function run(privateKey) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.10');
+    let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) ;
+    console.log(server_init);
+    result = sshSync(server_init, 'vagrant@192.168.33.10');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // the paths should be from root of cm directory
@@ -62,3 +72,7 @@ async function run(privateKey) {
     if( result.error ) { process.exit( result.status ); }
 
 }
+
+var escapeShell = function(cmd) {
+    return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+  };
