@@ -1,0 +1,17 @@
+{
+  "name": "mutation-testing",
+  "version": "1.0.0",
+  "description": "Run mutation testing on iTrusT",
+  "main": "mutation-testing.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "random-js": "^2.1.0",
+    "stacktrace-parser": "^0.1.9"
+  }
+}
