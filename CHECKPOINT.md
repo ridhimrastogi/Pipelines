@@ -12,6 +12,9 @@
     - Include code analysis stage in the build pipeline
     - Fetch javascript files for code analysis
     - Detection of Long methods
+
+3. Automatically configure a build environment and build job for a Java application (iTrust).
+    - configure build environment    
     
 ### Upcoming Tasks
 
@@ -24,6 +27,9 @@
     - Detection of message chains
     - Detection of nesting depth per function
     - Failure of the build job based on metrics
+
+3. Automatically configure a build environment and build job for a Java application (iTrust).    
+    - build job for iTrust 
     
 ### Project Board
 
