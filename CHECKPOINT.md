@@ -27,6 +27,8 @@
     
 ### Project Board
 
+![](images/M_2_Checkpoint.png)
+
 # Milestone 1
 
 ## Checkpoint 1 
