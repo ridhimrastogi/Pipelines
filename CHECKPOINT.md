@@ -7,6 +7,11 @@
 1. Add a component for mutation testing
     - Mutate java files
     - Run build and test suite locally
+
+2. Add a component for static code analysis
+    - Include code analysis stage in the build pipeline
+    - Fetch javascript files for code analysis
+    - Detection of Long methods
     
 ### Upcoming Tasks
 
@@ -14,6 +19,11 @@
     - Parse output of test suite
     - Run test suite for multiple iterations
     - Integerate component with other tasks by changing paths from local to remote
+
+2. Static code analysis
+    - Detection of message chains
+    - Detection of nesting depth per function
+    - Failure of the build job based on metrics
     
 ### Project Board
 
