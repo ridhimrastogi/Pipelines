@@ -14,13 +14,13 @@
                 }               
                 stage('build'){
                     steps{
-                        echo 'building'
+                        sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 | mvn build'
                     }
                 }
             }
             post{
                 always{
-                    echo 'Running Tests'
+                    sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 | mvn test'
                 }
             }
         }
