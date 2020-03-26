@@ -1,9 +1,8 @@
 const Random = require('random-js');
-//const marqdown = require('./marqdown.js');
 const fs = require('fs');
 const path = require('path');
 const stackTrace = require('stacktrace-parser');
-
+const execSync = require('child_process').execSync;
 
 var iterations;
 
@@ -24,31 +23,35 @@ class fuzzer {
 
     static mutateString (val) {
         // MUTATE IMPLEMENTATION HERE
-        var array = val.split('');
-        do{
-            if( fuzzer.random().bool(0.05) )
-            {
-                // REVERSE
-                array.reverse();
+        var array = val.split('\n');
+        var copy = [];
+        array.forEach(elem => {
+            if(!isHeader(elem.trim())){
+                elem = elem.replace(/0/g,'1');
+                elem = elem.replace(/==/g,'!=');
+                elem = elem.replace(/\s>=?\s/g," < ");
+                elem = elem.replace(/\s<=?\s/g," > ");
+                if( elem.includes('\"') && fuzzer.random().bool(0.25))
+                {
+                    // mutate strings
+                    elem = elem.replace(/"(.*?)"/g,
+                     `"${fuzzer._random.string(fuzzer._random.integer(0,elem.length + 10))}"`);
+                }
             }
-            // With 25% chance, remove a random set of characters, from a random start position
-            if( fuzzer.random().bool(0.25) )
-            {
-                //fuzzer.random.integer(0,99)
-                var start = fuzzer._random.integer(0,array.length);
-                var end = fuzzer._random.integer(0,array.length);
-                array.splice(start,end);
-            }
-            if( fuzzer.random().bool(0.25))
-            {
-                // add random characters
-                // fuzzer.random().string(10)
-                array.splice(fuzzer._random.integer(0,array.length),0,fuzzer._random.string(10))
-            }
-        }while(fuzzer.random().bool(0.05));
-        return array.join('');
+            copy.push(elem);
+        });
+        return copy.join('\n');
     }
 };
+
+
+function isHeader(content){
+    if(content.startsWith("package") || content.startsWith("import") || content.startsWith("@")
+        || content.startsWith("/*") || content.startsWith("*") || content.startsWith("//"))
+            return true;
+    return false;
+
+}
 
 function mutationTesting(paths,iterations)
 {
@@ -63,8 +66,10 @@ function mutationTesting(paths,iterations)
         fs.mkdirSync(tmpdirpath);
     }
 
+    console.log("MODIFIED FILES:\n");
     for (var i = 0; i < modified_files; i++) {
-        var filepath = paths[fuzzer._random.integer(0,paths.length)];
+        var filepath = paths[fuzzer._random.integer(0,paths.length-1)];
+        console.log(filepath);
         var filesplit = filepath.split("\\");
         var filename = filesplit[filesplit.length-1];
 
@@ -72,23 +77,34 @@ function mutationTesting(paths,iterations)
 
         var dstpath = path.join(tmpdirpath, filename);
         modfilescache[dstpath] = filepath;
-        console.log(dstpath);
-        console.log(filepath)
         fs.copyFileSync(filepath,dstpath, (err) => {
             if (err) throw err;
           });
         mutuatedString = fuzzer.mutateString(src);
         //console.log(mutuatedString);
+        fs.writeFileSync(filepath, mutuatedString, (err) => {
+            if (err) throw err;
+        });
     }
-    // try
-    // {
-    //         marqdown.render(mutuatedString);
-    //         passedTests++;
-    // }
-    // catch(e)
-    // {
-    //         failedTests.push( {input:mutuatedString, stack: e.stack} );
-    // }
+
+    try
+    {
+            //TO DO : Adjust path on server
+            var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2')
+            var output = execSync(`cd ${srcdirpath} && mvn -f pom-data.xml process-test-classes`, { encoding: 'utf-8' });
+            console.log('BUILD SUCCESFULL:\n', output);
+            output = execSync(`cd ${srcdirpath} && mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle`, { encoding: 'utf-8' });
+            console.log('Output was:\n', output);
+            //passedTests++;
+    }
+    catch(e)
+    {
+            console.log(e);
+            //revertfiles(modfilescache,tmpdirpath);
+            failedTests.push( {input:"xxx", stack: e.message} );
+    }
+
+    console.log(failedTests);
 
     // reduced = {};
     // // RESULTS OF FUZZING
@@ -113,6 +129,7 @@ function mutationTesting(paths,iterations)
     //     console.log( reduced[key] );
     // }
 
+    console.log("Resetting files\n");
     revertfiles(modfilescache,tmpdirpath);
 }
 
@@ -131,6 +148,7 @@ function revertfiles(modfilescache, dirpath){
 }
 
 function getsourcepath(){
+    //TO DO : Adjust path on server
     //var srcdirpath = path.join(__dirname, '..', 'iTrust2-v6','iTrust2','src','main','java');
     var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2','src','main','java');
     var srcpaths = [];
@@ -154,9 +172,6 @@ function traverseDir(dir,srcpaths) {
 function main(){
     fuzzer.seed(0);
     paths = getsourcepath();
-    console.log(paths);
-    console.log(paths.length);
-    console.log(iterations);
     mutationTesting(paths,iterations);
 }
 
