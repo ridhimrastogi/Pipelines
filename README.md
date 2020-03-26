@@ -10,11 +10,13 @@ To run the setup command: ```pipeline setup```
 
 To start build for checkbox.io use command: ```pipeline build checkbox.io```
 
+To run the  iTrust test suite use command: ```pipeline useful-tests -c 100```
+
 # CHECKPOINTS
 
 [Checkpoints](/CHECKPOINT.md)
 
-# MILESTONE REPORT
+# MILESTONE 1 REPORT
 
 Following are some of our team's experiences and issues faced during the course of this milestone:
 
