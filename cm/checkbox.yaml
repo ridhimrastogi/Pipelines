@@ -22,6 +22,12 @@
                         sh "cd server-side/site && pm2 start server.js"
                     }
                 }
+                stage('static analysis'){
+                    steps{
+                        sh "cd /bakerx/cm/static-analysis && npm install"
+                        sh "node /bakerx/cm/static-analysis/static-analysis.js"
+                    }
+                }
                 stage('test'){
                     steps{
                         sh "cd server-side/site && npm test"
