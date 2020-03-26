@@ -7,6 +7,7 @@ packages:
   - jenkins-job-builder
   - jq
   - nginx
+  - maven
 
 os_environment:
     - key: APP_PORT
