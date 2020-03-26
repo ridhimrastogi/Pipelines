@@ -16,22 +16,6 @@
   with_items: "{{ os_environment }}"
   become: yes
 
-- name: populate environment variable gh-user.
-  lineinfile:
-    dest: "/etc/environment"
-    state: present
-    regexp: "^GH_USER="
-    line: "GH_USER={{ lookup('env','GH_USER') }}"  
-  become: yes
-
-- name: populate environment variable gh-pwd.
-  lineinfile:
-    dest: "/etc/environment"
-    state: present
-    regexp: "^GH_PWD="
-    line: "GH_PWD={{ lookup('env','GH_PWD') }}"  
-  become: yes
-
 - name: Update and upgrade apt packages.
   apt:
     upgrade: yes

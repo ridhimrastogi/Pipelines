@@ -9,7 +9,7 @@
                 stage('cloning repo ... ') {
                     steps {
                         sh 'sudo rm -rf /var/lib/jenkins/workspace/iTrust/iTrust2-v6'
-                        sh 'stty -echo | git clone https://${GH_USER}:${GH_PWD}@github.ncsu.edu/engr-csc326-staff/iTrust2-v6.git'
+                        git branch: 'master', credentialsId: 'GIT_CRED', url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v6.git'
                     }
                 }               
                 stage('build'){
