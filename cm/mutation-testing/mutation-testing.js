@@ -2,6 +2,7 @@ const Random = require('random-js');
 const fs = require('fs');
 const path = require('path');
 const stackTrace = require('stacktrace-parser');
+const spawnSync = require('child_process').spawnSync;
 const execSync = require('child_process').execSync;
 
 var iterations;
@@ -17,7 +18,7 @@ class fuzzer {
     }
 
     static seed (kernel) {
-        fuzzer._random = new Random.Random(Random.MersenneTwister19937.seed(kernel));
+        fuzzer._random = new Random.Random(Random.MersenneTwister19937.autoSeed());
         return fuzzer._random;
     }
 
@@ -27,10 +28,10 @@ class fuzzer {
         var copy = [];
         array.forEach(elem => {
             if(!isHeader(elem.trim())){
-                elem = elem.replace(/0/g,'1');
+                elem = elem.replace(/\s0\s/g,' 1 ');
                 elem = elem.replace(/==/g,'!=');
-                elem = elem.replace(/\s>=?\s/g," < ");
-                elem = elem.replace(/\s<=?\s/g," > ");
+                elem = elem.replace("/\s>=?\s"," < ");
+                elem = elem.replace("\s<=?\s"," > ");
                 if( elem.includes('\"') && fuzzer.random().bool(0.25))
                 {
                     // mutate strings
@@ -46,7 +47,7 @@ class fuzzer {
 
 
 function isHeader(content){
-    if(content.startsWith("package") || content.startsWith("import") || content.startsWith("@")
+    if(content.startsWith("package") || content.startsWith("import") || content.includes("@")
         || content.startsWith("/*") || content.startsWith("*") || content.startsWith("//"))
             return true;
     return false;
@@ -55,82 +56,87 @@ function isHeader(content){
 
 function mutationTesting(paths,iterations)
 {
-    var failedTests = [];
-    var reducedTests = [];
-    var modfilescache = {};
+    var testResults = [];
     var tmpdirpath = path.join(__dirname,'tmp');
     var modified_files = paths.length/10;
     passedTests = 0;
 
-    if (!fs.existsSync(tmpdirpath)) {
-        fs.mkdirSync(tmpdirpath);
+    for (var iter = 1; iter <= iterations; iter++) {
+        if (!fs.existsSync(tmpdirpath)) {
+            fs.mkdirSync(tmpdirpath);
+        }
+        var modfilescache = {};
+        console.log(`\nModified Files in iteration ${iter}:\n`);
+        for (var i = 0; i < modified_files; i++) {
+            var filepath = paths[fuzzer._random.integer(0,paths.length-1)];
+            console.log(filepath);
+            var filesplit = filepath.split("\\");
+            var filename = filesplit[filesplit.length-1];
+
+            var src = fs.readFileSync(filepath,'utf-8');
+
+            var dstpath = path.join(tmpdirpath, filename);
+            modfilescache[dstpath] = filepath;
+            fs.copyFileSync(filepath,dstpath, (err) => {
+                if (err) throw err;
+            });
+            mutuatedString = fuzzer.mutateString(src);
+            fs.writeFileSync(filepath, mutuatedString, (err) => {
+                if (err) throw err;
+            });
+        }
+
+        try
+        {
+                //TO DO : Adjust path on server
+                var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2')
+                // var output = execSync(`cd ${srcdirpath} && mvn -f pom-data.xml process-test-classes`, { encoding: 'utf-8' });
+                // console.log('BUILD SUCCESFULL:\n', output);
+                var output = spawnSync(`cd ${srcdirpath} && mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle`, { encoding: 'utf-8', stdio: 'pipe' , shell: true });
+                testResults.push( {input: iter, stack: output.stdout} );
+        }
+        catch(e)
+        {
+                console.log("Build error: Restarting iteration");
+                console.log(e);
+                iter--;
+        }
+
+        //console.log(testResults);
+        console.log("\nResetting files\n");
+        revertfiles(modfilescache,tmpdirpath);
     }
 
-    console.log("MODIFIED FILES:\n");
-    for (var i = 0; i < modified_files; i++) {
-        var filepath = paths[fuzzer._random.integer(0,paths.length-1)];
-        console.log(filepath);
-        var filesplit = filepath.split("\\");
-        var filename = filesplit[filesplit.length-1];
-
-        var src = fs.readFileSync(filepath,'utf-8');
-
-        var dstpath = path.join(tmpdirpath, filename);
-        modfilescache[dstpath] = filepath;
-        fs.copyFileSync(filepath,dstpath, (err) => {
-            if (err) throw err;
-          });
-        mutuatedString = fuzzer.mutateString(src);
-        //console.log(mutuatedString);
-        fs.writeFileSync(filepath, mutuatedString, (err) => {
-            if (err) throw err;
+    failedTests = {};
+    // RESULTS OF FUZZING
+    for( var i =0; i < testResults.length; i++ )
+    {
+        var failed = testResults[i];
+        var msg = failed.stack.split("\n");
+        msg.filter(function(line) {
+            if(line.endsWith("<<< FAILURE!\r") || line.endsWith("<<< ERROR!\r")){
+                var temp = line.split(" ");
+                var test =  temp[1].substring(temp[1].indexOf("(") + 1,temp[1].indexOf(")")) + "." + temp[1].split("(")[0];
+                if (test in failedTests)
+                    failedTests[test] += 1;
+                else
+                    failedTests[test] = 1;
+            }
         });
     }
 
-    try
-    {
-            //TO DO : Adjust path on server
-            var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2')
-            var output = execSync(`cd ${srcdirpath} && mvn -f pom-data.xml process-test-classes`, { encoding: 'utf-8' });
-            console.log('BUILD SUCCESFULL:\n', output);
-            output = execSync(`cd ${srcdirpath} && mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle`, { encoding: 'utf-8' });
-            console.log('Output was:\n', output);
-            //passedTests++;
-    }
-    catch(e)
-    {
-            console.log(e);
-            //revertfiles(modfilescache,tmpdirpath);
-            failedTests.push( {input:"xxx", stack: e.message} );
-    }
+   //console.log(failedTests);
+    // Create items array
+    var items = Object.keys(failedTests).map(function(key) {
+        return [key, failedTests[key]];
+    });
 
-    console.log(failedTests);
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+        return second[1] - first[1];
+    });
 
-    // reduced = {};
-    // // RESULTS OF FUZZING
-    // for( var i =0; i < failedTests.length; i++ )
-    // {
-    //     var failed = failedTests[i];
-
-    //     var trace = stackTrace.parse( failed.stack );
-    //     var msg = failed.stack.split("\n")[0];
-    //     console.log( msg, trace[0].methodName, trace[0].lineNumber );
-
-    //     let key = trace[0].methodName + "." + trace[0].lineNumber;
-    //     if( !reduced.hasOwnProperty( key ) )
-    //     {
-    //     }
-    // }
-
-    // console.log( "passed {0}, failed {1}, reduced {2}".format(passedTests, failedTests.length, reducedTests.length) );
-
-    // for( var key in reduced )
-    // {
-    //     console.log( reduced[key] );
-    // }
-
-    console.log("Resetting files\n");
-    revertfiles(modfilescache,tmpdirpath);
+    items.forEach(item => console.log(`${item[1]}/${iterations} ` + item[0]));
 }
 
 function revertfiles(modfilescache, dirpath){
