@@ -13,10 +13,7 @@
                         sh 'sudo cp /var/lib/jenkins_templates/db.properties.template /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/db.properties'
                         sh 'sudo chmod 777 /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/db.properties'
 
-                        sh 'function subst() { eval echo -E "$2"; }'
-                        sh 'mapfile -c 1 -C subst < /var/lib/jenkins_templates/email.properties.template | sudo tee /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/email.properties'
-                        sh 'sudo chmod 777 /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/email.properties'
-                    }
+                        sh 'bash /var/lib/jenkins_scripts/copy_email_credentials.sh &>/dev/null'                    }
                 }               
                 stage('build'){
                     steps{                                            
@@ -29,4 +26,5 @@
                     sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle'
                 }
             }
+            
         }

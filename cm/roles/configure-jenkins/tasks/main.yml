@@ -19,16 +19,29 @@
   file: path=/var/lib/jenkins_templates
         state=directory
         mode=0775
+
+- name: Create jenkins scripts directory
+  become: yes
+  file: path=/var/lib/jenkins_scripts
+        state=directory
+        mode=0775
   
 - name: Add jenkins template db.properties
   become: yes
-  template: src=db.properties.template
+  file: src=db.properties.template
             dest=/var/lib/jenkins_templates/db.properties.template
 
 - name: Add jenkins template email.properties
   become: yes
-  template: src=email.properties.template
+  file: src=email.properties.template
             dest=/var/lib/jenkins_templates/email.properties.template
+            
+
+- name: Add iTrust bash script
+  become: yes
+  file: src=copy_email_credentials.sh
+            dest=/var/lib/jenkins_scripts/copy_email_credentials.sh
+            mode=0777
 
 
 
