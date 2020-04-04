@@ -1,0 +1,4 @@
+from 
+username $GH_USER
+password $GH_PWD
+host smtp.gmail.com

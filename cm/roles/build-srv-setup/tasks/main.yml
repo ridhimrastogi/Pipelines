@@ -1,4 +1,9 @@
 ---
+- name: Set timezone to America/New_York
+  timezone:
+    name: America/New_York
+  become: yes
+
 - name: add jenkins user to sudoers file.
   lineinfile:
     dest: /etc/sudoers
@@ -48,6 +53,24 @@
     state: present
   become: yes
 
+# ****************this is a workaround since mysql PyMySQL requires mysql_native_password ************************************
+- name: Specify MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password
+    value: "root"
+    vtype: password
+
+- name: Confirm MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password_again
+    value: "root"
+    vtype: password
+    # ************************************************************************************************************************
+
 - name: Installing required packages.
   apt:
     pkg: "{{packages}}"
@@ -81,6 +104,12 @@
 - name: Install mongo support.
   pip:
     name: pymongo
+    executable: pip3
+  become: yes
+
+- name: Install mySQL support.
+  pip:
+    name: PyMySQL
     executable: pip3
   become: yes
 

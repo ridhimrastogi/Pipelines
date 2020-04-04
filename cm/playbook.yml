@@ -3,13 +3,16 @@
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
 - hosts: jenkins
-  gather_facts: no  
+  gather_facts: yes  
   roles:
     - ping   
     - build-srv-setup   
     - role: configure-mongodb
       vars:
         ansible_python_interpreter: python3
-    - configure-jenkins    
+    - configure-jenkins
+    - role: configure-mysql
+      vars:
+        ansible_python_interpreter: python3
     
 

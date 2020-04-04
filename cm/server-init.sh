@@ -8,7 +8,6 @@ set -x
 
 GH_USER=$1
 GH_PWD=$2
-echo $2
 
 # Script used to initialize your ansible server after provisioning.
 sudo add-apt-repository ppa:ansible/ansible -y

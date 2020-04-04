@@ -8,6 +8,8 @@ packages:
   - jq
   - nginx
   - maven
+  - mysql-server
+  - libmysql-java
 
 os_environment:
     - key: APP_PORT
@@ -20,4 +22,8 @@ os_environment:
       value : "{{ default_user_pwd }}"
     - key: MONGO_IP
       value : "localhost"
+    - key:  GH_USER
+      value: "{{ lookup('env','GH_USER')  }}"
+    - key:  GH_PWD
+      value: "{{ lookup('env','GH_PWD')   }}"
 

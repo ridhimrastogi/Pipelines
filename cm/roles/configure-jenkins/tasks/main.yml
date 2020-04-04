@@ -14,6 +14,24 @@
   template: src=credentials.xml
             dest=/var/lib/jenkins/credentials.xml
 
+- name: Create jenkins template directory
+  become: yes
+  file: path=/var/lib/jenkins_templates
+        state=directory
+        mode=0775
+  
+- name: Add jenkins template db.properties
+  become: yes
+  template: src=db.properties.template
+            dest=/var/lib/jenkins_templates/db.properties.template
+
+- name: Add jenkins template email.properties
+  become: yes
+  template: src=email.properties.template
+            dest=/var/lib/jenkins_templates/email.properties.template
+
+
+
 - name: Set Jenkins server port to 9000.
   become: yes
   lineinfile:
