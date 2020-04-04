@@ -74,5 +74,5 @@ async function run(privateKey, gh_user, gh_pass) {
 }
 
 var escapeShell = function(cmd) {
-    return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+    return '"'+ cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
   };
