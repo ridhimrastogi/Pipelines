@@ -38,6 +38,7 @@ function FunctionBuilder()
     this.LOC = 0
     this.FunctionName = ""
     this.MaxNestingDepth = 0
+    this.MaxChains = 0
 
     this.report = () => {
         console.log(
@@ -47,9 +48,10 @@ function FunctionBuilder()
                 "Start Line: {1}\t" +
                 "End Line: {2}\t" +
                 "LOC: {3}\t" +
-                "MaxNestingDepth: {4}\n"
+                "Max Chains: {4}\t" +
+                "MaxNestingDepth: {5}\n"
             )
-            .format(this.FunctionName, this.StartLine, this.EndLine, this.LOC, this.MaxNestingDepth)
+            .format(this.FunctionName, this.StartLine, this.EndLine, this.LOC, this.MaxChains,this.MaxNestingDepth)
         )
     }
 }
@@ -108,8 +110,30 @@ complexity = (filePath) => {
             builder.FunctionName = functionName(node)
             builder.StartLine = node.loc.start.line
             builder.EndLine = node.loc.end.line
-            builder.LOC = builder.EndLine - builder.StartLine
+            builder.LOC = builder.EndLine - builder.StartLine + 1
             builders[builder.FunctionName] = builder
+
+            traverseWithParents(node, (nodeChild) =>{
+
+                if(nodeChild.object){
+
+                    let localChainCount = 0
+
+                    traverseWithParents(nodeChild, (nodeChildChild) =>{
+                        if(nodeChildChild.property){
+                            localChainCount++
+                        }
+                        else{
+                            return;
+                        }
+                    })
+
+                    if(builder.MaxChains < localChainCount){
+                        builder.MaxChains = localChainCount
+                    }
+                }
+
+            })
             
         }
         if(node.name === 'require'){
