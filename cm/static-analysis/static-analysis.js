@@ -30,6 +30,7 @@ traverseDir = (dir, srcPaths) => {
 
 let builders = {}
 
+
 function FunctionBuilder()
 {
 
@@ -113,27 +114,54 @@ complexity = (filePath) => {
             builder.LOC = builder.EndLine - builder.StartLine + 1
             builders[builder.FunctionName] = builder
 
+
+            //Max Chain calculation
+            let localChainCount = 0
+
             traverseWithParents(node, (nodeChild) =>{
 
-                if(nodeChild.object){
+                if(nodeChild.type == 'MemberExpression'){
 
-                    let localChainCount = 0
 
                     traverseWithParents(nodeChild, (nodeChildChild) =>{
-                        if(nodeChildChild.property){
+                        if(nodeChildChild.type == 'MemberExpression'){
                             localChainCount++
                         }
-                        else{
-                            return;
-                        }
                     })
-
-                    if(builder.MaxChains < localChainCount){
-                        builder.MaxChains = localChainCount
-                    }
                 }
 
+                builder.MaxChains = Math.max(builder.MaxChains, localChainCount)
+                localChainCount = 0
+
             })
+
+            
+            //Max Nesting Depth Calculation
+            let maxdepth
+			let subtract
+			traverseWithParents(node, (nodeChild) => {
+				//First check whether it is if, for or while loop or not
+				if (isIfStatement(nodeChild)) {
+					traverseWithParents(nodeChild, (nodeChildChild) => {
+						//First check whether it is if, for or while loop or not
+						if (isIfStatement(nodeChildChild)) {
+							
+							if(nodeChildChild.nextSibling){
+								subtract++
+							}
+							maxdepth++
+						}
+					})
+					maxdepth = maxdepth - subtract
+					subtract = 0
+					if (maxdepth > builder.MaxNestingDepth) {
+						builder.MaxNestingDepth = maxdepth
+                    }
+				}
+				maxdepth = 0
+			})
+            
+
             
         }
         if(node.name === 'require'){
@@ -142,8 +170,17 @@ complexity = (filePath) => {
 
     })
 
+}
 
 
+// Helper function to check if the node is an IF Statement
+function isIfStatement(node)
+{
+	if( node.type == 'IfStatement')
+	{
+		return true;
+	}
+	return false;
 }
 
 // Helper function for allowing parameterized formatting of strings.
