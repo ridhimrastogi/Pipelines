@@ -26,4 +26,8 @@ os_environment:
       value: "{{ lookup('env','GH_USER')  }}"
     - key:  GH_PWD
       value: "{{ lookup('env','GH_PWD')   }}"
+    - key:  GM_USER
+      value: "{{ lookup('env','GM_USER')  }}"
+    - key:  GM_PWD
+      value: "{{ lookup('env','GM_PWD')   }}"
 

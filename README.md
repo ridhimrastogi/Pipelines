@@ -16,6 +16,21 @@ To run the  iTrust test suite use command: ```pipeline useful-tests -c 100```
 
 [Checkpoints](/CHECKPOINT.md)
 
+# MILESTONE 2 REPORT
+
+**Setup**
+
+Below is the basic syntax for provisioning the servers.
+
+*Note: You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
+
+```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
+
+*Note single quote around passwords. The allows special characters to pass*
+
+
+
+
 # MILESTONE 1 REPORT
 
 Following are some of our team's experiences and issues faced during the course of this milestone:

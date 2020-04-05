@@ -1,4 +1,4 @@
-from $GH_USER
-username $GH_USER
-password $GH_PWD
+from $GM_USER
+username $GM_USER
+password $GM_PWD
 host smtp.gmail.com

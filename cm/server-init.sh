@@ -8,6 +8,8 @@ set -x
 
 GH_USER=$1
 GH_PWD=$2
+GM_USER=$3
+GM_PWD=$4
 
 # Script used to initialize your ansible server after provisioning.
 sudo add-apt-repository ppa:ansible/ansible -y
@@ -23,6 +25,12 @@ echo "GH_USER=${GH_USER}" >> /etc/environment
 sudo cat /etc/environment
 
 echo "GH_PWD=${GH_PWD}" >> /etc/environment
+sudo cat /etc/environment
+
+echo "GM_USER=${GM_USER}" >> /etc/environment
+sudo cat /etc/environment
+
+echo "GM_PWD=${GM_PWD}" >> /etc/environment
 sudo cat /etc/environment
 
 sudo chmod 600 /etc/environment

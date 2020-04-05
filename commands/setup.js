@@ -25,22 +25,32 @@ exports.builder = yargs => {
         describe: 'user password',
         type: 'string',
         nargs: 1
+    }).positional('gm-user', {
+        alias: 'gm_user',
+        describe: 'gmail user',
+        type: 'string',
+        nargs: 1
+    }).positional('gm-pass', {
+        alias: 'gm_pass',
+        describe: 'gmail user password',
+        type: 'string',
+        nargs: 1
     });
 };
 
 
 exports.handler = async argv => {
-    const { privateKey, gh_user, gh_pass } = argv;
+    const { privateKey, gh_user, gh_pass, gm_user, gm_pass } = argv;
 
     (async () => {
 
-        await run( privateKey, gh_user, gh_pass );
+        await run( privateKey, gh_user, gh_pass, gm_user, gm_pass );
 
     })();
 
 };
 
-async function run(privateKey, gh_user, gh_pass) {
+async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     console.log(chalk.blueBright('Provisioning configuration server...'));
     let result = child.spawnSync(`bakerx`, `run ansible-srv bionic --ip 192.168.33.10 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
@@ -57,7 +67,7 @@ async function run(privateKey, gh_user, gh_pass) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) ;
+    let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass);
     console.log(server_init);
     result = sshSync(server_init, 'vagrant@192.168.33.10');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
