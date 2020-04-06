@@ -57,7 +57,7 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Provisioning jenkins server...'));
-    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --memory 4096 --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));

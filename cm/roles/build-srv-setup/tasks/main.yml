@@ -12,6 +12,14 @@
     line: "jenkins ALL=(ALL) NOPASSWD: ALL"
   become: yes
 
+- name: add vagrant user to sudoers file.
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    insertbefore: "# See sudoers"
+    line: "vagrant ALL=(ALL) NOPASSWD: ALL"
+  become: yes
+
 - name: populate environment variables.
   lineinfile:
     dest: "/etc/environment"
@@ -82,7 +90,12 @@
     update_cache: yes
   become: yes
 
-- name: start nginx 
+- name: Install chrome binary
+  apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  become: yes
+
+- name: start nginx
   service:
     name: nginx
     state: started

@@ -3,9 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const stackTrace = require('stacktrace-parser');
 const spawnSync = require('child_process').spawnSync;
-const execSync = require('child_process').execSync;
 
 var iterations;
+const srcDirPath = path.join("/var/lib/jenkins/workspace/iTrust/iTrust2");
 
 if(process.argv.length >= 3)
 {
@@ -23,14 +23,18 @@ class fuzzer {
     }
 
     static mutateString (val) {
-        // MUTATE IMPLEMENTATION HERE
+        // MUTATION IMPLEMENTATION HERE
         var array = val.split('\n');
         var copy = [];
         array.forEach(elem => {
             if(!isHeader(elem.trim())){
+                //replace 0 with 1
                 elem = elem.replace(/\s0\s/g,' 1 ');
+                //replace == with !=
                 elem = elem.replace(/==/g,'!=');
+                //replace >/>= with <
                 elem = elem.replace("/\s>=?\s"," < ");
+                //replace </<= with >
                 elem = elem.replace("\s<=?\s"," > ");
                 if( elem.includes('\"') && fuzzer.random().bool(0.25))
                 {
@@ -45,7 +49,7 @@ class fuzzer {
     }
 };
 
-
+//Check if a line start or contains these characters. Don't fuzz the line if it does
 function isHeader(content){
     if(content.startsWith("package") || content.startsWith("import") || content.includes("@")
         || content.startsWith("/*") || content.startsWith("*") || content.startsWith("//"))
@@ -61,7 +65,9 @@ function mutationTesting(paths,iterations)
     var modified_files = paths.length/10;
     passedTests = 0;
 
+    //Run the mutation fnction multiple times
     for (var iter = 1; iter <= iterations; iter++) {
+        //Create a tmp directory if it doesn't exists
         if (!fs.existsSync(tmpdirpath)) {
             fs.mkdirSync(tmpdirpath);
         }
@@ -70,17 +76,22 @@ function mutationTesting(paths,iterations)
         for (var i = 0; i < modified_files; i++) {
             var filepath = paths[fuzzer._random.integer(0,paths.length-1)];
             console.log(filepath);
-            var filesplit = filepath.split("\\");
+            var filesplit = filepath.split("/");
             var filename = filesplit[filesplit.length-1];
-
             var src = fs.readFileSync(filepath,'utf-8');
-
             var dstpath = path.join(tmpdirpath, filename);
+            //If file already mutated, skip the file
+            if(modfilescache.hasOwnProperty(dstpath))
+                continue;
+            //Store the path to modified files in a dict
             modfilescache[dstpath] = filepath;
+            //Copy the original file to tmp folder
             fs.copyFileSync(filepath,dstpath, (err) => {
                 if (err) throw err;
             });
+            //Mutate the file
             mutuatedString = fuzzer.mutateString(src);
+            //Write back the mutated file to original location
             fs.writeFileSync(filepath, mutuatedString, (err) => {
                 if (err) throw err;
             });
@@ -88,33 +99,31 @@ function mutationTesting(paths,iterations)
 
         try
         {
-                //TO DO : Adjust path on server
-                var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2')
-                // var output = execSync(`cd ${srcdirpath} && mvn -f pom-data.xml process-test-classes`, { encoding: 'utf-8' });
-                // console.log('BUILD SUCCESFULL:\n', output);
-                var output = spawnSync(`cd ${srcdirpath} && mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle`, { encoding: 'utf-8', stdio: 'pipe' , shell: true });
+                //Run the test suite
+                var output = spawnSync(`cd ${srcDirPath} && mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle`, { encoding: 'utf-8', stdio: 'pipe' , shell: true });
+                //Push the test results to the array
                 testResults.push( {input: iter, stack: output.stdout} );
         }
         catch(e)
         {
-                console.log("Build error: Restarting iteration");
-                console.log(e);
+                // If build fails restrart iteration
+                console.log("Build error: Restarting iteration\n" + e);
                 iter--;
         }
 
-        //console.log(testResults);
         console.log("\nResetting files\n");
+        //Copy the original files back to the working directory
         revertfiles(modfilescache,tmpdirpath);
     }
 
     failedTests = {};
-    // RESULTS OF FUZZING
+    //Get failed tests in each iteration
     for( var i =0; i < testResults.length; i++ )
     {
         var failed = testResults[i];
         var msg = failed.stack.split("\n");
         msg.filter(function(line) {
-            if(line.endsWith("<<< FAILURE!\r") || line.endsWith("<<< ERROR!\r")){
+            if(line.endsWith("<<< FAILURE!") || line.endsWith("<<< ERROR!")){
                 var temp = line.split(" ");
                 var test =  temp[1].substring(temp[1].indexOf("(") + 1,temp[1].indexOf(")")) + "." + temp[1].split("(")[0];
                 if (test in failedTests)
@@ -125,7 +134,6 @@ function mutationTesting(paths,iterations)
         });
     }
 
-   //console.log(failedTests);
     // Create items array
     var items = Object.keys(failedTests).map(function(key) {
         return [key, failedTests[key]];
@@ -135,7 +143,7 @@ function mutationTesting(paths,iterations)
     items.sort(function(first, second) {
         return second[1] - first[1];
     });
-
+    //Print test results
     items.forEach(item => console.log(`${item[1]}/${iterations} ` + item[0]));
 }
 
@@ -143,7 +151,7 @@ function revertfiles(modfilescache, dirpath){
     if (fs.existsSync(dirpath)) {
         fs.readdirSync(dirpath).forEach((file, index) => {
             const curPath = path.join(dirpath, file);
-            console.log(curPath);
+            console.log(curPath + "\n" +modfilescache[curPath]);
             fs.copyFileSync(curPath, modfilescache[curPath] , (err) => {
                  if (err) throw err;
                  });
@@ -154,10 +162,9 @@ function revertfiles(modfilescache, dirpath){
 }
 
 function getsourcepath(){
-    //TO DO : Adjust path on server
-    //var srcdirpath = path.join(__dirname, '..', 'iTrust2-v6','iTrust2','src','main','java');
-    var srcdirpath = path.join(__dirname, '..', '..','..','iTrust2-v6','iTrust2','src','main','java');
+    var srcdirpath = path.join(srcDirPath,'src','main','java');
     var srcpaths = [];
+    //Get a list of source files
     traverseDir(srcdirpath, srcpaths);
     return srcpaths;
 }
@@ -184,18 +191,6 @@ function main(){
 
 exports.mutationTesting = mutationTesting;
 exports.fuzzer = fuzzer;
-
-if (!String.prototype.format) {
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
-      ;
-    });
-  };
-}
 
 if (require.main === module){
     main();
