@@ -2,6 +2,8 @@ const esprima = require("esprima")
 const options = {tokens:true, tolerant: true, loc: true, range: true };
 const fs = require("fs")
 const path = require("path")
+const chalk = require("chalk")
+
 
 getSourcePath = () => {
     let srcDirPath = path.join(__dirname, '..', '..', '..', 'var', 'lib', 'jenkins','workspace', 'checkbox.io', 'server-side', 'site')
@@ -38,6 +40,7 @@ function FunctionBuilder()
     this.EndLine = 0
     this.LOC = 0
     this.FunctionName = ""
+    this.FileName = ""
     this.MaxNestingDepth = 0
     this.MaxChains = 0
 
@@ -49,7 +52,7 @@ function FunctionBuilder()
                 "Start Line: {1}\t" +
                 "End Line: {2}\t" +
                 "LOC: {3}\t" +
-                "Max Chains: {4}\t" +
+                "Max Message Chains: {4}\t" +
                 "MaxNestingDepth: {5}\n"
             )
             .format(this.FunctionName, this.StartLine, this.EndLine, this.LOC, this.MaxChains,this.MaxNestingDepth)
@@ -61,15 +64,10 @@ function FileBuilder()
 {
     
     this.FileName = ""
-    this.ImportCount = 0;
 
     this.report = () => {
-        console.log(
-            ("{0}\n" +
-             "~~~~~~~~~~~~\n" +
-             "Import Count {1}\t"
-            ).format(this.FileName, this.ImportCount)
-        )
+        console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+        console.log(chalk.cyanBright(("Absolute File Path: {0}\n").format(this.FileName)))
     }
 }
 
@@ -109,6 +107,7 @@ complexity = (filePath) => {
             let builder = new FunctionBuilder()
 
             builder.FunctionName = functionName(node)
+            builder.FileName = filePath
             builder.StartLine = node.loc.start.line
             builder.EndLine = node.loc.end.line
             builder.LOC = builder.EndLine - builder.StartLine + 1
@@ -209,17 +208,68 @@ function functionName( node )
 main = () => {
     
     let paths = getSourcePath()
-    console.log(paths)
 
     for(let path of paths){
         complexity(path)
     }
 
-    for(let node in builders )
-	{
-		let builder = builders[node];
-		builder.report();
-	}
+        for(let node in builders )
+        {
+            let builder = builders[node];
+            
+            if(builder.LOC > 100){
+                
+                console.log(chalk.redBright("Failing the build because a long method is detected, following are the details:"))
+                let fileNameSplit = builder.FileName.split('/')
+                console.log("File Name: " + fileNameSplit[fileNameSplit.length-1])
+                console.log("Method Name: " + builder.FunctionName)
+                console.log("LOC:" + builder.LOC)
+                console.log(chalk.blueBright("The full Static analysis report is as follows: "))
+                for(let node in builders){
+                    let builder = builders[node]
+                    builder.report()
+                }
+                    
+                process.exit(1)
+    
+            } else if(builder.MaxChains > 10){
+
+                console.log(chalk.redBright("Failing the build because the maximum message chain threshold is crossed, following are the details:"))
+                let fileNameSplit = builder.FileName.split('/')
+                console.log("File Name: " + fileNameSplit[fileNameSplit.length-1])
+                console.log("Method Name: " + builder.FunctionName)
+                console.log("Max Message Chain: " + builder.MaxChains)
+                console.log(chalk.blueBright("The full Static analysis report is as follows: "))
+                for(let node in builders){
+                    let builder = builders[node]
+                    builder.report()
+                }
+                
+                process.exit(1)
+    
+            } else if(builder.MaxNestingDepth > 5){
+    
+                console.log(chalk.redBright("Failing the build because the maximun nesting depth threshold is crossed, following are the details:"))
+                let fileNameSplit = builder.FileName.split('/')
+                console.log("File Name: " + fileNameSplit[fileNameSplit.length-1])
+                console.log("Method Name: " + builder.FunctionName)
+                console.log("Max Nesting Depth: " + builder.MaxNestingDepth)
+                console.log(chalk.blueBright("The full Static analysis report is as follows: "))
+                for(let node in builders){
+                    let builder = builders[node]
+                    builder.report()
+                }
+                
+                process.exit(1)
+    
+            } 
+        }
+
+        console.log(chalk.greenBright("No static analysis metrics were violated, the full report is as follows: "))
+        for(let node in builders){
+            let builder = builders[node]
+            builder.report()
+        }
 }
 
 main()
