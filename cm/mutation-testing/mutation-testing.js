@@ -72,10 +72,10 @@ function mutationTesting(paths,iterations)
             fs.mkdirSync(tmpdirpath);
         }
         var modfilescache = {};
-        console.log(`\nModified Files in iteration ${iter}:\n`);
+        //console.log(`\nModified Files in iteration ${iter}:\n`);
         for (var i = 0; i < modified_files; i++) {
             var filepath = paths[fuzzer._random.integer(0,paths.length-1)];
-            console.log(filepath);
+            //console.log(filepath);
             var filesplit = filepath.split("/");
             var filename = filesplit[filesplit.length-1];
             var src = fs.readFileSync(filepath,'utf-8');
@@ -111,7 +111,7 @@ function mutationTesting(paths,iterations)
                 iter--;
         }
 
-        console.log("\nResetting files\n");
+        //console.log("\nResetting files\n");
         //Copy the original files back to the working directory
         revertfiles(modfilescache,tmpdirpath);
     }
@@ -151,7 +151,7 @@ function revertfiles(modfilescache, dirpath){
     if (fs.existsSync(dirpath)) {
         fs.readdirSync(dirpath).forEach((file, index) => {
             const curPath = path.join(dirpath, file);
-            console.log(curPath + "\n" +modfilescache[curPath]);
+            //console.log(curPath + "\n" +modfilescache[curPath]);
             fs.copyFileSync(curPath, modfilescache[curPath] , (err) => {
                  if (err) throw err;
                  });
