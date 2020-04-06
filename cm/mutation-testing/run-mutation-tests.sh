@@ -19,5 +19,6 @@ FILEPATH=$1
 COUNT=$2
 
 sudo chown vagrant:vagrant -R /var/lib/jenkins/workspace/iTrust
+cd /bakerx/cm/mutation-testing/ && npm install
 node $FILEPATH $COUNT
 sudo chown jenkins:jenkins -R /var/lib/jenkins/workspace/iTrust
