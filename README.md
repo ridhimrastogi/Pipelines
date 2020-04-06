@@ -6,11 +6,14 @@ Steps to run:
 2. Run ```npm install```
 3. Run ```npm link```
 
-To run the setup command: ```pipeline setup```
+To run the setup command: ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' ```
+
+To build the iTrust database  use command: ```pipeline build iTrust```
+
+To run mutation testing on iTrust test suite use command: ```pipeline useful-tests -c <iterations>```
 
 To start build for checkbox.io use command: ```pipeline build checkbox.io```
 
-To run the  iTrust test suite use command: ```pipeline useful-tests -c 100```
 
 # CHECKPOINTS
 
