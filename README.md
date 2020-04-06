@@ -28,6 +28,9 @@ Below is the basic syntax for provisioning the servers.
 
 *Note single quote around passwords. The allows special characters to pass*
 
+**Problems Encountered**
+There were various problems encountered while trying to get the iTrust to build and test properly. The main issues were trying to pass the credentials to clone the iTrust repo. This involved several steps to pass the supplied username and password along the chain from the configuration server all the way to the build server, Jenkins. In addition, these credentials had to be made secure, so the credential plugin in Jenkins was used to supply the credentials to GitHub.
+
 
 
 
