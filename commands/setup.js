@@ -84,5 +84,11 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 }
 
 var escapeShell = function(cmd) {
-    return '"'+ cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+    if(cmd != null) {
+        return '"'+ cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+    }
+    else    
+    {
+        return;
+    }
   };
