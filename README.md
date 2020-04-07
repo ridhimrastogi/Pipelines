@@ -29,11 +29,17 @@ Below is the basic syntax for provisioning the servers.
 
 ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
 
+*Note --gm-user and --gm-pass are optional fields. If not provided default values will be used*
 *Note single quote around passwords. The allows special characters to pass*
 
-**Problems Encountered**
-There were various problems encountered while trying to get the iTrust to build and test properly. The main issues were trying to pass the credentials to clone the iTrust repo. This involved several steps to pass the supplied username and password along the chain from the configuration server all the way to the build server, Jenkins. In addition, these credentials had to be made secure, so the credential plugin in Jenkins was used to supply the credentials to GitHub.
 
+Following are some of our team's experiences and issues faced during the course of this milestone:
+
+- **Passing github credentials:** The main issues were trying to pass the credentials to clone the iTrust repo. This involved several steps to pass the supplied username and password along the chain from the configuration server all the way to the build server, Jenkins. In addition, these credentials had to be made secure, so the credential plugin in Jenkins was used to supply the credentials to GitHub.
+
+- **Mutation Testing:** A major issue in mutation testing was to parse the results from the test suite run. There were a couple of ways to so this including one where test results were read from the reports generated. Since the report was generated for each tets case individually and not for the entire test suite this approach was cumbersome and we decided to parse the console output itself for the task.
+
+- **Static Analysis:** To calculate the MaxNestingDepth required a lot of experimentation to ensure that all test cases were covered. Esprima Parser playground was a huge help to manually analyze the code which enabled us to customise our algorithm for metric calculation for static analysis. We looked around for best practices to fail the Jenkins build on vioalation of static analysis meetric thersholds and finally zeroed upon the usage of process module of Node.js 
 
 
 
