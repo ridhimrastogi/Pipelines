@@ -1,12 +1,18 @@
 # DEVOPS-12
 
-Steps to run:
+**Setup**
 
 1. Clone the project
 2. Run ```npm install```
 3. Run ```npm link```
 
-To run the setup command: ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' ```
+Below is the basic syntax for provisioning the servers:
+
+```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
+
+*Note: --gm-user and --gm-pass are optional fields. If not provided default values will be used*
+*Note: If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
+*Note:  Single quote around passwords with special characters are expected*
 
 To build the iTrust database  use command: ```pipeline build iTrust```
 
@@ -20,18 +26,6 @@ To start build for checkbox.io use command: ```pipeline build checkbox.io```
 [Checkpoints](/CHECKPOINT.md)
 
 # MILESTONE 2 REPORT
-
-**Setup**
-
-Below is the basic syntax for provisioning the servers.
-
-*Note: You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
-
-```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
-
-*Note --gm-user and --gm-pass are optional fields. If not provided default values will be used*
-*Note single quote around passwords. The allows special characters to pass*
-
 
 Following are some of our team's experiences and issues faced during the course of this milestone:
 
