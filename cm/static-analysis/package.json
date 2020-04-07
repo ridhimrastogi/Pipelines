@@ -1,0 +1,16 @@
+{
+  "name": "static-analysis",
+  "version": "6.13.4",
+  "description": "Static code analysis",
+  "main": "static-analysis.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esprima": "^4.0.1",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  }
+}

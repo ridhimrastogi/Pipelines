@@ -9,6 +9,42 @@
   template: src=basic-security.groovy
             dest=/var/lib/jenkins/init.groovy.d/basic-security.groovy
 
+- name: Add GIT Hub NCSU credentials
+  become: yes
+  template: src=credentials.xml
+            dest=/var/lib/jenkins/credentials.xml
+
+- name: Create jenkins template directory
+  become: yes
+  file: path=/var/lib/jenkins_templates
+        state=directory
+        mode=0775
+
+- name: Create jenkins scripts directory
+  become: yes
+  file: path=/var/lib/jenkins_scripts
+        state=directory
+        mode=0775
+  
+- name: Add jenkins template db.properties
+  become: yes
+  copy: src=db.properties.template
+            dest=/var/lib/jenkins_templates/db.properties.template
+
+- name: Add jenkins template email.properties
+  become: yes
+  copy: src=email.properties.template
+            dest=/var/lib/jenkins_templates/email.properties.template
+            
+
+- name: Add iTrust bash script
+  become: yes
+  copy: src=copy_email_credentials.sh
+            dest=/var/lib/jenkins_scripts/copy_email_credentials.sh
+            mode=0777
+
+
+
 - name: Set Jenkins server port to 9000.
   become: yes
   lineinfile:
@@ -81,3 +117,9 @@
   delay: 5
   notify:
     - restart jenkins
+ 
+
+- name: Post Jenkins Credential to server
+  shell: curl -X POST -H content-type:application/xml -d @credential.xml \
+          http://192.168.33.20:9000/credentials/store/system/\
+          domain/_/createCredentials

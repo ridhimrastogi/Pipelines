@@ -1,10 +1,23 @@
 ---
+- name: Set timezone to America/New_York
+  timezone:
+    name: America/New_York
+  become: yes
+
 - name: add jenkins user to sudoers file.
   lineinfile:
     dest: /etc/sudoers
     state: present
     insertbefore: "# See sudoers"
     line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+  become: yes
+
+- name: add vagrant user to sudoers file.
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    insertbefore: "# See sudoers"
+    line: "vagrant ALL=(ALL) NOPASSWD: ALL"
   become: yes
 
 - name: populate environment variables.
@@ -48,6 +61,24 @@
     state: present
   become: yes
 
+# ****************this is a workaround since mysql PyMySQL requires mysql_native_password ************************************
+- name: Specify MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password
+    value: "root"
+    vtype: password
+
+- name: Confirm MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password_again
+    value: "root"
+    vtype: password
+    # ************************************************************************************************************************
+
 - name: Installing required packages.
   apt:
     pkg: "{{packages}}"
@@ -59,7 +90,12 @@
     update_cache: yes
   become: yes
 
-- name: start nginx 
+- name: Install chrome binary
+  apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  become: yes
+
+- name: start nginx
   service:
     name: nginx
     state: started
@@ -81,6 +117,12 @@
 - name: Install mongo support.
   pip:
     name: pymongo
+    executable: pip3
+  become: yes
+
+- name: Install mySQL support.
+  pip:
+    name: PyMySQL
     executable: pip3
   become: yes
 

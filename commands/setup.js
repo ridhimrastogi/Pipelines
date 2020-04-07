@@ -15,31 +15,49 @@ exports.builder = yargs => {
             describe: 'Install the provided private key on the configuration server',
             type: 'string'
         }
+    }).positional('gh-user', {
+        alias: 'gh_user',
+        describe: 'user name',
+        type: 'string',
+        nargs: 1
+    }).positional('gh-pass', {
+        alias: 'gh_pass',
+        describe: 'user password',
+        type: 'string',
+        nargs: 1
+    }).positional('gm-user', {
+        alias: 'gm_user',
+        describe: 'gmail user',
+        type: 'string',
+        nargs: 1
+    }).positional('gm-pass', {
+        alias: 'gm_pass',
+        describe: 'gmail user password',
+        type: 'string',
+        nargs: 1
     });
 };
 
 
 exports.handler = async argv => {
-    const { privateKey } = argv;
+    const { privateKey, gh_user, gh_pass, gm_user, gm_pass } = argv;
 
     (async () => {
 
-        await run( privateKey );
+        await run( privateKey, gh_user, gh_pass, gm_user, gm_pass );
 
     })();
 
 };
 
-async function run(privateKey) {
-
-    console.log(chalk.greenBright('Installing configuration server!'));
+async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     console.log(chalk.blueBright('Provisioning configuration server...'));
     let result = child.spawnSync(`bakerx`, `run ansible-srv bionic --ip 192.168.33.10 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Provisioning jenkins server...'));
-    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    result = child.spawnSync(`bakerx`, `run jenkins-srv bionic --memory 4096 --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
@@ -49,7 +67,9 @@ async function run(privateKey) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.10');
+    let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass);
+    console.log(server_init);
+    result = sshSync(server_init, 'vagrant@192.168.33.10');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // the paths should be from root of cm directory
@@ -62,3 +82,13 @@ async function run(privateKey) {
     if( result.error ) { process.exit( result.status ); }
 
 }
+
+var escapeShell = function(cmd) {
+    if(cmd != null) {
+        return '"'+ cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+    }
+    else    
+    {
+        return;
+    }
+  };

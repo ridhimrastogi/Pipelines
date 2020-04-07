@@ -10,7 +10,7 @@ println "--> creating local user 'admin'"
 
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 instance.setSecurityRealm(hudsonRealm)
-hudsonRealm.createAccount('admin','admin')
+hudsonRealm.createAccount('admin','{{ jenkins_default_pwd }}')
 
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 instance.setAuthorizationStrategy(strategy)
