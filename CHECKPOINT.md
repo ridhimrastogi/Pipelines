@@ -14,6 +14,7 @@
 ### Upcoming Tasks
 1. Monitor Control Plane
     - Need clarification if this can be on same VM (build server) or require additional VM.
+2. Canary Analysis for checkbox.io    
 
 ### Project Board
 
