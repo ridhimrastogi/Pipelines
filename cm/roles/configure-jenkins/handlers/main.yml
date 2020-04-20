@@ -7,7 +7,7 @@
 
 - name: wait for jenkins
   uri:
-    url: http://192.168.33.20:9000
+    url: http://{{ jenkinssrv_IP }}
     status_code: 200
     timeout: 5
   register: jenkins_service_status

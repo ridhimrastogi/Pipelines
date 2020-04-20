@@ -73,7 +73,7 @@
     name: build-pipeline-plugin
     with_dependencies: yes
     state: latest
-    url: http://192.168.33.20:9000
+    url: http://{{ jenkinssrv_IP }}
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
     timeout: 60
@@ -90,7 +90,7 @@
     name: workflow-aggregator
     with_dependencies: yes
     state: latest
-    url: http://192.168.33.20:9000
+    url: http://{{ jenkinssrv_IP }}
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
     timeout: 60
@@ -107,7 +107,7 @@
     name: pipeline-github
     with_dependencies: yes
     state: latest
-    url: http://192.168.33.20:9000
+    url: http://{{ jenkinssrv_IP }}
     url_username: admin
     url_password: "{{ jenkins_default_pwd }}"
     timeout: 60
@@ -121,5 +121,5 @@
 
 - name: Post Jenkins Credential to server
   shell: curl -X POST -H content-type:application/xml -d @credential.xml \
-          http://192.168.33.20:9000/credentials/store/system/\
+          http://{{ jenkinssrv_IP }}/credentials/store/system/\
           domain/_/createCredentials

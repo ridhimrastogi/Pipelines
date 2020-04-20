@@ -8,6 +8,8 @@ set -x
 
 GH_USER=$1
 GH_PWD=$2
+jenkinssrv_IP$3
+jenkinssrv_ID$4
 
 sudo chmod 666 /etc/environment
 
@@ -15,6 +17,12 @@ echo "GH_USER=${GH_USER}" >> /etc/environment
 sudo cat /etc/environment
 
 echo "GH_PWD=${GH_PWD}" >> /etc/environment
+sudo cat /etc/environment
+
+echo "jenkinssrv_IP=${jenkinssrv_IP}" >> /etc/environment
+sudo cat /etc/environment
+
+echo "jenkinssrv_ID=${jenkinssrv_ID}" >> /etc/environment
 sudo cat /etc/environment
 
 

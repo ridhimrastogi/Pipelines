@@ -9,6 +9,8 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^3.0.0",
+    "got": "^9.6.0",
+    "ssh-exec": "^2.0.0",
     "yargs": "^15.1.0"
   }
 }
