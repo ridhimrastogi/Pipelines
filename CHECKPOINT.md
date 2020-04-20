@@ -1,3 +1,13 @@
+# Milestone 3
+
+## Checkpoint 1
+
+### Tasks Completed
+
+
+
+### Upcoming Tasks
+
 # Milestone 2
 
 ## Checkpoint 1
