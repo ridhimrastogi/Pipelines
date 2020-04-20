@@ -15,6 +15,10 @@
 1. Monitor Control Plane
     - Need clarification if this can be on same VM (build server) or require additional VM.
 
+### Project Board
+
+![](images/M3CHCKPT.png)
+
 # Milestone 2
 
 ## Checkpoint 1
