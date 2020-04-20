@@ -56,8 +56,8 @@ exports.handler = async argv => {
 async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     let promises = [];
-    let ansible_IP= process.env.ansiblesrv_IP;
-    let jenkins_IP= process.env.jenkinssrv_IP;
+    let ansible_IP;
+    let jenkins_IP;
 
     console.log(chalk.blueBright('Provisioning configuration server...'));
     promises.push(provision.createDroplet('ansiblesrv', '512mb') );
@@ -69,11 +69,13 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
     await new Promise(r => setTimeout(r, 30000));
-    let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');
+    let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');    
+    result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);
+    
+    console.log(chalk.blueBright('Cloning Repo'));
     var ghUsrNamNpwd = `${encodeURIComponent(gh_user)}:${encodeURIComponent(gh_pass)}`;
     console.log(ghUsrNamNpwd);
-    var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M2`,{user: 'root',host:ansible_IP,key: identifyFile});
-    result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);    
+    var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M3`,{user: 'root',host:ansible_IP,key: identifyFile});
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // Run the setup script

@@ -8,8 +8,7 @@ set -x
 
 GH_USER=$1
 GH_PWD=$2
-jenkinssrv_IP$3
-jenkinssrv_ID$4
+
 
 sudo chmod 666 /etc/environment
 
@@ -19,11 +18,7 @@ sudo cat /etc/environment
 echo "GH_PWD=${GH_PWD}" >> /etc/environment
 sudo cat /etc/environment
 
-echo "jenkinssrv_IP=${jenkinssrv_IP}" >> /etc/environment
-sudo cat /etc/environment
 
-echo "jenkinssrv_ID=${jenkinssrv_ID}" >> /etc/environment
-sudo cat /etc/environment
 
 
 if [ "$3" != "undefined" ]
@@ -36,6 +31,19 @@ if [ "$3" != "undefined" ]
     sudo cat /etc/environment
 
     echo "GM_PWD=${GM_PWD}" >> /etc/environment
+    sudo cat /etc/environment
+fi
+
+if [ "$5" != "undefined" ]
+  then
+    
+    jenkinssrv_IP$5
+    jenkinssrv_ID$6 
+
+    echo "jenkinssrv_IP=${jenkinssrv_IP}" >> /etc/environment
+    sudo cat /etc/environment
+
+    echo "jenkinssrv_ID=${jenkinssrv_ID}" >> /etc/environment
     sudo cat /etc/environment
 fi
 
