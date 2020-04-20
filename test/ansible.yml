@@ -5,17 +5,17 @@
          cmd: ansible --version
          range: ^2.9.x
       - reachable:
-          - /bakerx
-          - /bakerx/pipeline/inventory.ini
+          - ~/DEVOPS-12
+          - ~/DEVOPS-12/pipeline/inventory.ini
       - contains: 
           comment: Checking if you have MSDOS style newlines in your bash scripts. Fix with dos2unix
           string: "\r"
           expect: false
-          file: /bakerx/pipeline/run-ansible.sh
+          file: ~/DEVOPS-12/pipeline/run-ansible.sh
       - contains: 
           string: "\r"
           expect: false
-          file: /bakerx/pipeline/server-init.sh
+          file: ~/DEVOPS-12/pipeline/server-init.sh
       - reachable:
         - path: .ssh/js_rsa
           permission: 700

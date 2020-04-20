@@ -82,7 +82,7 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = 'DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + ansiblesrv_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
+    let server_init = '~/DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + ansible_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
     console.log(server_init);
     result = sshSync(server_init, `root@${ansible_IP}`);
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
