@@ -37,8 +37,8 @@ fi
 if [ "$5" != "undefined" ]
   then
     
-    jenkinssrv_IP$5
-    jenkinssrv_ID$6 
+    jenkinssrv_IP=$5
+    jenkinssrv_ID=$6 
 
     echo "jenkinssrv_IP=${jenkinssrv_IP}" >> /etc/environment
     sudo cat /etc/environment
