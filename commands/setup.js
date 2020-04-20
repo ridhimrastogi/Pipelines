@@ -69,18 +69,20 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
     await new Promise(r => setTimeout(r, 30000));
-    let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');    
+    let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');
+    console.log(chalk.yellow("Private key path: " + identifyFile));
     result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);
     
     console.log(chalk.blueBright('Cloning Repo'));
     var ghUsrNamNpwd = `${encodeURIComponent(gh_user)}:${encodeURIComponent(gh_pass)}`;
     console.log(ghUsrNamNpwd);
     var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M3`,{user: 'root',host:ansible_IP,key: identifyFile});
+    await new Promise(r => setTimeout(r, 10000));
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = 'DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + jenkins_IP + ' ' + 8574;
+    let server_init = 'DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' ansiblesrv_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
     console.log(server_init);
     result = sshSync(server_init, `root@${ansible_IP}`);
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
