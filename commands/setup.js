@@ -63,12 +63,11 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     promises.push(provision.createDroplet('ansiblesrv', '512mb') );
     promises.push(provision.createDroplet('jenkinssrv', 's-2vcpu-4gb'));
     await Promise.all(promises).then(async function (addresses) {ansible_IP = addresses[0]; jenkins_IP = addresses[1]; });
-    console.log(ansible_IP);    
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    await new Promise(r => setTimeout(r, 30000)); //give servers time to boot
+    // // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
 
-    console.log(chalk.blueBright('Installing privateKey on configuration server'));
-    await new Promise(r => setTimeout(r, 30000));
+    console.log(chalk.blueBright('Installing privateKey on configuration server'));    
     let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');
     console.log(chalk.yellow("Private key path: " + identifyFile));
     result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);
@@ -89,11 +88,11 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     // the paths should be from root of cm directory
     // Transforming path of the files in host to the path in VM's shared folder
-    // let filePath = 'DEVOPS-12/' + 'cm/playbook.yml';
-    // let inventoryPath = 'DEVOPS-12/' + 'cm/inventory.ini';
+    let filePath = '~/DEVOPS-12/' + 'cm/playbook.yml';
+    let inventoryPath = '~/DEVOPS-12/' + 'cm/inventory.ini';
 
-    // console.log(chalk.blueBright('Running ansible playbook script...'));
-    // result = sshSync(`DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${ansible_IP}`);
+    console.log(chalk.blueBright('Running ansible playbook script...'));
+    result = sshSync(`~/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${ansible_IP}`);
     // if( result.error ) { process.exit( result.status ); }
 
 }
