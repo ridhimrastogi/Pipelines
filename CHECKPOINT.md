@@ -9,6 +9,7 @@
         - Jenkins
         - Checkbox.IO
         - iTrust
+2. Added Deploy command framework
 
 
 ### Upcoming Tasks
