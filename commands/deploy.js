@@ -49,6 +49,6 @@ async function run(project) {
         console.log("Not yet supported. Try again with checkbox.io or iTrust --gh-user --gh-password")
     }
 
-
+    }
 
 }
