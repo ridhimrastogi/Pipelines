@@ -3,7 +3,6 @@ const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
-let provision = require('../lib/provision');
 let exec = require('ssh-exec');
 
 
@@ -55,16 +54,7 @@ exports.handler = async argv => {
 
 async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
-    let promises = [];
-    let ansible_IP;
-    let jenkins_IP;
-
-    console.log(chalk.blueBright('Provisioning configuration server...'));
-    promises.push(provision.createDroplet('ansiblesrv', '512mb') );
-    promises.push(provision.createDroplet('jenkinssrv', 's-2vcpu-4gb'));
-    await Promise.all(promises).then(async function (addresses) {ansible_IP = addresses[0]; jenkins_IP = addresses[1]; });
-    await new Promise(r => setTimeout(r, 30000)); //give servers time to boot
-    // // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    
 
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));    
