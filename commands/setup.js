@@ -66,18 +66,33 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     await new Promise(r => setTimeout(r, 30000)); //give servers time to boot
     // // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
+    result = sshSync(`mkdir /root/DEVOPS-12`, `root@${ansible_IP}`);
+    if( result.error ) { process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Installing privateKey on configuration server'));    
+    console.log(chalk.blueBright('Installing privateKey on configuration server'));
     let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');
     console.log(chalk.yellow("Private key path: " + identifyFile));
     result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);
-    
-    console.log(chalk.blueBright('Cloning Repo'));
-    var ghUsrNamNpwd = `${encodeURIComponent(gh_user)}:${encodeURIComponent(gh_pass)}`;
-    console.log(ghUsrNamNpwd);
-    var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M3`,{user: 'root',host:ansible_IP,key: identifyFile});
-    await new Promise(r => setTimeout(r, 10000));
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    console.log(chalk.blueBright('scp repo on ansible server'));
+    let cm_dir = path.join(__dirname, "..","cm");
+    console.log(cm_dir);
+    result = scpSync (cm_dir, `root@${ansible_IP}:/root/DEVOPS-12/cm`, true);
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    console.log(chalk.blueBright('scp repo on ansible server'));
+    let test_dir = path.join(__dirname, "..","test");
+    console.log(test_dir);
+    result = scpSync (test_dir, `root@${ansible_IP}:/root/DEVOPS-12/test`, true);
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    // console.log(chalk.blueBright('Cloning Repo'));
+    // var ghUsrNamNpwd = `${encodeURIComponent(gh_user)}:${encodeURIComponent(gh_pass)}`;
+    // console.log(ghUsrNamNpwd);
+    // var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M3`,{user: 'root',host:ansible_IP,key: identifyFile});
+    // await new Promise(r => setTimeout(r, 10000));
+    // // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
