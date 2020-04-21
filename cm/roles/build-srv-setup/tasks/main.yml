@@ -45,6 +45,7 @@
   apt_repository:
     repo: deb https://pkg.jenkins.io/debian-stable binary/
     filename: jenkins
+    update_cache: false
     state: present
   become: yes
 
@@ -58,6 +59,7 @@
   apt_repository:
     repo: deb https://deb.nodesource.com/node_12.x bionic main
     filename: nodesource
+    update_cache: false
     state: present
   become: yes
 
@@ -87,7 +89,7 @@
 
 - name: apt update.
   apt:
-    update_cache: yes
+    update_cache: false
   become: yes
 
 - name: Install chrome binary

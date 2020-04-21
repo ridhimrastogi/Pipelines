@@ -1,3 +1,26 @@
+# Milestone 3
+
+## Checkpoint 1
+
+### Tasks Completed
+1. Provision VMs in DigitalOcean
+    - provisioned ansible server
+    - provisioned build server; Contains:
+        - Jenkins
+        - Checkbox.IO
+        - iTrust
+2. Added Deploy command framework
+
+
+### Upcoming Tasks
+1. Monitor Control Plane
+    - Need clarification if this can be on same VM (build server) or require additional VM.
+2. Canary Analysis for checkbox.io    
+
+### Project Board
+
+![](images/M3CHCKPT.png)
+
 # Milestone 2
 
 ## Checkpoint 1
