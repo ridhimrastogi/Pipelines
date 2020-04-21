@@ -53,7 +53,9 @@ exports.handler = async argv => {
 };
 
 async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
-
+    let serverInfos = JSON.parse(fs.readFileSync("serverInfos.json", 'utf8'));    
+    let ansible_IP = serverInfos.find(x => x.name == 'ansiblesrv').ip_address; 
+    let jenkins_IP = serverInfos.find(x => x.name == 'jenkinssrv').ip_address;    
     
 
     result = sshSync(`mkdir /root/DEVOPS-12`, `root@${ansible_IP}`);
