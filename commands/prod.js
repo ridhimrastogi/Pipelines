@@ -27,10 +27,9 @@ async function run(status) {
     let promises = [];
     
     if (status == 'up') {                
-        let requiredServers =[{serverName: 'ansiblesrv', slug: '512mb' },{serverName: 'monitorsrv', slug: '512mb' },{serverName: 'jenkinssrv', slug: 's-2vcpu-4gb' },{serverName: 'checkboxiosrv', slug: '512mb' },{serverName: 'itrustsrv', slug: '512mb' }];
+        let requiredServers =[{serverName: 'monitorsrv', slug: '512mb' },{serverName: 'checkboxiosrv', slug: '512mb' },{serverName: 'itrustsrv', slug: 's-2vcpu-4gb' }];
         let serverInfos = {};
         
-
         console.log(chalk.blueBright('Provisioning required servers...'));
         requiredServers.forEach(server => {
             console.log(chalk.yellow('Provisioning server ' + server.serverName));
@@ -41,11 +40,12 @@ async function run(status) {
         await Promise.all(promises).then(function (data) { 
             for (let index = 0; index < requiredServers.length; index++) {
                 let dropletInfo = data[index];                
-                serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name};
+                serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name, private_key: "csc_519_rsa_private"};
                 //console.log(`ID: ${dropletInfo.id} ServerName: ${dropletInfo.name} IP_Address: ${dropletInfo.ip_address}`);
             }            
          });
 
+         await updateInventory(serverInfos);
          //save sever info to file
          try {
             fs.writeFileSync("cm/serverInfos.json", JSON.stringify(serverInfos))
@@ -78,5 +78,35 @@ async function run(status) {
     }
 
 
+}
 
+async function updateInventory(serverInfos){
+    let inventory_txt;
+    let inventory_stack = [];
+
+    serverInfos["jenkinssrv"] = {id: 0, ip_address: "192.168.33.20", name: "jenkinssrv", private_key: "insecure_private_key"}; //inject local jenkins server
+
+    inventory_stack.push('[initialize]')
+    Object.values(serverInfos).forEach(server => {
+        if(server.name != 'ansiblesrv') {
+            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}`);
+        }
+    });
+    inventory_stack.push('[initialize:vars]');
+    inventory_stack.push(`ansible_ssh_common_args='-o StrictHostKeyChecking=no'`)
+    inventory_stack.push(`ansible_user=root`);
+    inventory_stack.push('ansible_python_interpreter=python3');
+    inventory_txt = inventory_stack.join("\n") + '\n\n\n';
+    inventory_stack = [];
+
+    //make each server own group
+    Object.values(serverInfos).forEach(server => {
+        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
+    });
+    inventory_txt = inventory_txt + inventory_stack.join("\n") + '\n\n\n';
+
+    let inventory_path = path.join(__dirname, "..", "cm", "inventory.ini");   
+    fs.writeFileSync(inventory_path, inventory_txt, function(err) {
+      if(err) throw err;
+    });
 }
