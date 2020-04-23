@@ -9,24 +9,13 @@
     - ping   
     - server-setup
     - configure-mysql
+    
 
 - hosts:  monitorsrv
   gather_facts: yes  
   roles:
-    - configure-monitor      
-
-
-- hosts: checkboxsrv
-  gather_facts: yes
-  roles:   
-    - configure-checkbox
-    - configure-mongodb      
-
-- hosts: itrustsrv
-  gather_facts: yes
-  roles:     
-    - itrust-setup
-     
+    - configure-monitor
+    
 
 - hosts: jenkinssrv
   gather_facts: yes  
