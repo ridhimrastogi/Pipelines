@@ -1,0 +1,6 @@
+---
+packages:
+  - python3-pip
+  - mongodb
+  - nodejs
+  - nginx
