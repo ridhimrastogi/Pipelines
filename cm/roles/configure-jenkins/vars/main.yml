@@ -1,0 +1,5 @@
+---
+packages:  
+  - jenkins-job-builder
+  - jq 
+  - maven 

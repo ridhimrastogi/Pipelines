@@ -4,14 +4,6 @@
     name: America/New_York
   become: yes
 
-- name: add jenkins user to sudoers file.
-  lineinfile:
-    dest: /etc/sudoers
-    state: present
-    insertbefore: "# See sudoers"
-    line: "jenkins ALL=(ALL) NOPASSWD: ALL"
-  become: yes
-
 - name: add vagrant user to sudoers file.
   lineinfile:
     dest: /etc/sudoers
@@ -33,20 +25,6 @@
   apt:
     upgrade: yes
     update_cache: yes
-  become: yes
-
-- name: add jenkins key.
-  apt_key:
-    url: https://pkg.jenkins.io/debian/jenkins.io.key
-    state: present
-  become: yes
-
-- name: add jenkins repo.
-  apt_repository:
-    repo: deb https://pkg.jenkins.io/debian-stable binary/
-    filename: jenkins
-    update_cache: false
-    state: present
   become: yes
 
 - name: add nodejs key.
@@ -107,13 +85,6 @@
   npm:
     name: pm2
     global: yes
-  become: yes
-
-- name: Installing Jenkins.
-  apt:
-    pkg: "jenkins"
-    state: present
-    update_cache: yes
   become: yes
 
 - name: Install mongo support.

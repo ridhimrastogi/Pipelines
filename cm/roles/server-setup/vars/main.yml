@@ -3,10 +3,8 @@ packages:
   - python3-pip
   - openjdk-8-jdk
   - mongodb
-  - nodejs
-  - jenkins-job-builder
-  - jq
+  - nodejs 
   - nginx
-  - maven
   - mysql-server
   - libmysql-java
+  - redis-server

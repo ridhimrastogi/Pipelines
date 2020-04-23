@@ -1,0 +1,6 @@
+---
+- name: Installing required packages.
+  apt:
+    pkg: "{{packages}}"
+    state: present
+  become: yes
