@@ -1,0 +1,55 @@
+---
+- name: Set timezone to America/New_York
+  timezone:
+    name: America/New_York
+  become: yes
+
+- name: populate environment variables.
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value}}"
+  with_items: "{{ os_environment }}"
+  become: yes
+
+- name: Update and upgrade apt packages.
+  apt:
+    upgrade: yes
+    update_cache: yes
+  become: yes
+
+# ****************this is a workaround since mysql PyMySQL requires mysql_native_password ************************************
+- name: Specify MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password
+    value: "root"
+    vtype: password
+
+- name: Confirm MySQL root password before installing
+  become: true
+  debconf:
+    name: mysql-server
+    question: mysql-server/root_password_again
+    value: "root"
+    vtype: password
+    # ************************************************************************************************************************
+
+- name: Installing required packages.
+  apt:
+    pkg: "{{packages}}"
+    state: present
+  become: yes
+
+- name: apt update.
+  apt:
+    update_cache: false
+  become: yes
+
+- name: Install mySQL support.
+  pip:
+    name: PyMySQL
+    executable: pip3
+  become: yes
