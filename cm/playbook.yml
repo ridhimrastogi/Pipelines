@@ -2,16 +2,31 @@
 # see the best practices in ansible docs for how to get started with creating roles etc.: 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
+
 - hosts: initialize
   gather_facts: yes  
   roles:
     - ping   
     - server-setup
+    - configure-mysql
 
 - hosts:  monitorsrv
   gather_facts: yes  
   roles:
     - configure-monitor      
+
+
+- hosts: checkboxsrv
+  gather_facts: yes
+  roles:   
+    - configure-checkbox
+    - configure-mongodb      
+
+- hosts: itrustsrv
+  gather_facts: yes
+  roles:     
+    - itrust-setup
+     
 
 - hosts: jenkinssrv
   gather_facts: yes  

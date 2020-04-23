@@ -119,8 +119,8 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     // the paths should be from root of cm directory
     // Transforming path of the files in host to the path in VM's shared folder
-    let filePath = '~/DEVOPS-12/' + 'cm/playbook.yml';
-    let inventoryPath = '~/DEVOPS-12/' + 'cm/inventory.ini';
+    let filePath = '/root/DEVOPS-12/' + 'cm/playbook.yml';
+    let inventoryPath = '/root/DEVOPS-12/' + 'cm/inventory.ini';
 
     console.log(chalk.blueBright('Running ansible playbook script...'));
     result = sshSync(`~/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${serverInfos.ansiblesrv.ip_address}`);
