@@ -88,18 +88,20 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = '~/DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + ansible_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
-    console.log(server_init);
+    let server_init = '/root/DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + ansible_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
+    
+    
+    
     result = sshSync(server_init, `root@${ansible_IP}`);
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // the paths should be from root of cm directory
     // Transforming path of the files in host to the path in VM's shared folder
-    let filePath = '~/DEVOPS-12/' + 'cm/playbook.yml';
-    let inventoryPath = '~/DEVOPS-12/' + 'cm/inventory.ini';
+    let filePath = '/root/DEVOPS-12/' + 'cm/playbook.yml';
+    let inventoryPath = '/root/DEVOPS-12/' + 'cm/inventory.ini';
 
     console.log(chalk.blueBright('Running ansible playbook script...'));
-    result = sshSync(`~/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${ansible_IP}`);
+    result = sshSync(`/root/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${ansible_IP}`);
     // if( result.error ) { process.exit( result.status ); }
 
 }
