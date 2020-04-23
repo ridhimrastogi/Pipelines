@@ -62,16 +62,20 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     inventory_stack.push('[initialize]')
     Object.values(serverInfos).forEach(server => {
         if(server.name != 'ansiblesrv') {
-            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root`);
+            inventory_stack.push(`${server.ip_address}`);
         }
     });
-    inventory_stack.push(`[initialize:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`)
+    inventory_stack.push('[initialize:vars]');
+    inventory_stack.push(`ansible_ssh_common_args='-o StrictHostKeyChecking=no'`)
+    inventory_stack.push(`ansible_ssh_private_key_file=~/.ssh/js_rsa`);
+    inventory_stack.push(`ansible_user=root`);
+    inventory_stack.push('ansible_python_interpreter=python3');
     inventory_txt = inventory_stack.join("\n") + '\n\n\n';
     inventory_stack = [];
 
     //make each server own group
     Object.values(serverInfos).forEach(server => {
-        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`);
+        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
     });
     inventory_txt = inventory_txt + inventory_stack.join("\n") + '\n\n\n';
 
@@ -81,6 +85,10 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     });
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
+    //temporary scpsync does not appear to overwrite files
+    result = sshSync(`sudo rm -d -r /root/DEVOPS-12`, `root@${serverInfos.ansiblesrv.ip_address}`);
+    if( result.error ) { process.exit( result.status ); }
+    ///////////////////////
     result = sshSync(`mkdir -p /root/DEVOPS-12`, `root@${serverInfos.ansiblesrv.ip_address}`);
     if( result.error ) { process.exit( result.status ); }
     
@@ -104,7 +112,7 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = 'DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + serverInfos.ansiblesrv.ip_address + ' ' + 4657 + ' ' + serverInfos.jenkinssrv.ip_address + ' ' + 8574;
+    let server_init = '~/DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + serverInfos.ansiblesrv.ip_address + ' ' + 4657 + ' ' + serverInfos.jenkinssrv.ip_address + ' ' + 8574;
     console.log(server_init);
     result = sshSync(server_init, `root@${serverInfos.ansiblesrv.ip_address}`);
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }

@@ -17,8 +17,4 @@ os_environment:
     - key:  GM_USER
       value: "{{ lookup('env','GM_USER') if ( lookup('env','GM_USER') ) else 'halfheartedtrebel' }}" 
     - key:  GM_PWD
-      value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}" 
-    - key:  jenkinssrv_IP
-      value: "{{ lookup('env','jenkinssrv_IP') }}"
-    - key:  jenkinssrv_ID
-      value: "{{ lookup('env','jenkinssrv_ID') }}" 
+      value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}"   

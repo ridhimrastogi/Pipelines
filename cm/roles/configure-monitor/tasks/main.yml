@@ -4,3 +4,39 @@
     pkg: "{{packages}}"
     state: present
   become: yes
+
+- name: Create Monitor a directory if it does not exist
+  file:
+    path: Monitor
+    state: directory
+    mode: '0755'
+
+- name: Copy Monitor zip
+  become: yes
+  unarchive: src=Monitor.zip
+            dest=Monitor
+            mode=0777
+
+- name: Install server packages
+  npm:
+    path: Monitor/Servers
+
+- name: Install agent packages
+  npm:
+    path: Monitor/agent
+
+- name: Install dashboard packages
+  npm:
+    path: Monitor/dashboard
+
+- name: "Install forever (to run Node.js app)."
+  npm: name=forever global=yes state=present
+   
+- name: "Check list of Node.js apps running."
+  command: forever list
+  register: forever_list
+  changed_when: false
+
+- name: "Start example Node.js app."
+  command: forever start Monitor/dashboard/bin/www
+  when: "forever_list.stdout.find('Monitor/dashboard/bin/www') == -1"

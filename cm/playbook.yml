@@ -11,17 +11,11 @@
 - hosts:  monitorsrv
   gather_facts: yes  
   roles:
-    - configure-monitor
+    - configure-monitor      
 
-- hosts: jenkinssrv, checkboxiosrv, itrustsrv
+- hosts: jenkinssrv
   gather_facts: yes  
   roles:
-    - role: configure-mongodb
-      vars:
-        ansible_python_interpreter: python3
+    - configure-mongodb     
     - configure-jenkins
-    - role: configure-mysql
-      vars:
-        ansible_python_interpreter: python3
-    
-
+    - configure-mysql   

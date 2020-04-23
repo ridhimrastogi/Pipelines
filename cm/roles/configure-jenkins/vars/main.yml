@@ -3,3 +3,5 @@ packages:
   - jenkins-job-builder
   - jq 
   - maven 
+
+jenkinssrv_IP: "{{ lookup('env','jenkinssrv_IP') }}"
