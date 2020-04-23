@@ -47,7 +47,7 @@ if [ "$5" != "undefined" ]
     sudo cat /etc/environment   
     
     #replaces the first ip address in yml file
-    sed -i "0,/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/ {s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$ansiblesrv_IP/}" ~/DEVOPS-12/test/inventory.yml
+    # sed -i "0,/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/ {s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$ansiblesrv_IP/}" ~/DEVOPS-12/test/inventory.yml
 
 fi
 
@@ -64,10 +64,10 @@ if [ "$7" != "undefined" ]
     sudo cat /etc/environment
 
     # replace ip address with latest ip address for jenkins on ansible server
-    sed -i "s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$jenkinssrv_IP/g" ~/DEVOPS-12/cm/inventory.ini
+    # sed -i "s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$jenkinssrv_IP/g" ~/DEVOPS-12/cm/inventory.ini
     
     # replaces the second ip address in yml file
-    sed -i "0,/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/! {s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$jenkinssrv_IP/}" ~/DEVOPS-12/test/inventory.yml
+    # sed -i "0,/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/! {s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$jenkinssrv_IP/}" ~/DEVOPS-12/test/inventory.yml
 fi
 
 sudo chmod 600 /etc/environment
