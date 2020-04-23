@@ -71,3 +71,4 @@ sudo apt-get install ansible -y
 
 # Ensure security key has proper permissions
 chmod 700 ~/.ssh/js_rsa
+chmod 700 ~/.ssh/csc_519_rsa_private

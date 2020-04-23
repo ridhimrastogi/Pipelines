@@ -40,7 +40,7 @@ async function run(status) {
         await Promise.all(promises).then(function (data) { 
             for (let index = 0; index < requiredServers.length; index++) {
                 let dropletInfo = data[index];                
-                serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name, private_key: "csc_519_rsa_private"};
+                serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name, private_key: "csc_519_rsa_private", user: "root"};
                 //console.log(`ID: ${dropletInfo.id} ServerName: ${dropletInfo.name} IP_Address: ${dropletInfo.ip_address}`);
             }            
          });
@@ -84,24 +84,23 @@ async function updateInventory(serverInfos){
     let inventory_txt;
     let inventory_stack = [];
 
-    serverInfos["jenkinssrv"] = {id: 0, ip_address: "192.168.33.20", name: "jenkinssrv", private_key: "insecure_private_key"}; //inject local jenkins server
+    serverInfos["jenkinssrv"] = {id: 0, ip_address: "192.168.33.20", name: "jenkinssrv", private_key: "js_rsa", user: "vagrant"}; //inject local jenkins server
 
     inventory_stack.push('[initialize]')
     Object.values(serverInfos).forEach(server => {
         if(server.name != 'ansiblesrv') {
-            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}`);
+            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key} ansible_user=${server.user}`);
         }
     });
     inventory_stack.push('[initialize:vars]');
-    inventory_stack.push(`ansible_ssh_common_args='-o StrictHostKeyChecking=no'`)
-    inventory_stack.push(`ansible_user=root`);
+    inventory_stack.push(`ansible_ssh_common_args='-o StrictHostKeyChecking=no'`)    
     inventory_stack.push('ansible_python_interpreter=python3');
     inventory_txt = inventory_stack.join("\n") + '\n\n\n';
     inventory_stack = [];
 
     //make each server own group
     Object.values(serverInfos).forEach(server => {
-        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
+        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
     });
     inventory_txt = inventory_txt + inventory_stack.join("\n") + '\n\n\n';
 

@@ -23,4 +23,5 @@ os_environment:
     - key:  jenkinssrv_ID
       value: "{{ lookup('env','jenkinssrv_ID') }}"
 
-jenkinssrv_IP: "{{ lookup('env','jenkinssrv_IP') }}"
+jenkinssrv_IP: "192.168.33.20"
+# jenkinssrv_IP: "{{ lookup('env','jenkinssrv_IP') }}"

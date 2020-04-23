@@ -1,7 +1,7 @@
 ---
 - name: Copy mongodb.conf
   copy:
-    src: ~/DEVOPS-12/cm/mongodb.conf
+    src: /bakerx/cm/mongodb.conf
     dest: /etc/mongodb.conf      
   become: yes
 
