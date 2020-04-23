@@ -2,17 +2,26 @@
 # see the best practices in ansible docs for how to get started with creating roles etc.: 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
-- hosts: jenkins
+- hosts: jenkinssrv, checkboxiosrv, itrustsrv, monitorsrv
   gather_facts: yes  
   roles:
     - ping   
-    - build-srv-setup   
-    - role: configure-mongodb
-      vars:
-        ansible_python_interpreter: python3
-    - configure-jenkins
-    - role: configure-mysql
-      vars:
-        ansible_python_interpreter: python3
+    - build-srv-setup
+
+# - hosts:  monitorsrv
+#   gather_facts: yes  
+#   roles:
+#     - configure-monitor
+
+# - hosts: jenkinssrv, checkboxiosrv, itrustsrv
+#   gather_facts: yes  
+#   roles:
+#     - role: configure-mongodb
+#       vars:
+#         ansible_python_interpreter: python3
+#     - configure-jenkins
+#     - role: configure-mysql
+#       vars:
+#         ansible_python_interpreter: python3
     
 

@@ -53,44 +53,46 @@ exports.handler = async argv => {
 };
 
 async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
-    let serverInfos = JSON.parse(fs.readFileSync("serverInfos.json", 'utf8'));    
-    let ansible_IP = serverInfos.find(x => x.name == 'ansiblesrv').ip_address; 
-    let jenkins_IP = serverInfos.find(x => x.name == 'jenkinssrv').ip_address;    
+    let serverInfos = JSON.parse(fs.readFileSync("serverInfos.json", 'utf8')); 
     
+    console.log(chalk.blueBright('Setup Inventory.ini file'));
+    let inventory_txt = [];
+    Object.values(serverInfos).forEach(server => {
+        inventory_txt.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`);
+    });
 
-    result = sshSync(`mkdir /root/DEVOPS-12`, `root@${ansible_IP}`);
-    if( result.error ) { process.exit( result.status ); }
+    let inventory_path = path.join(__dirname, "..", "cm", "inventory.ini");   
+    fs.writeFile(inventory_path, inventory_txt.join("\n") , function(err) {
+      if(err) throw err;
+    });
 
     console.log(chalk.blueBright('Installing privateKey on configuration server'));
+    result = sshSync(`mkdir -p /root/DEVOPS-12`, `root@${serverInfos.ansiblesrv.ip_address}`);
+    if( result.error ) { process.exit( result.status ); }
+    
     let identifyFile = privateKey || path.join(os.homedir(), '.bakerx', 'csc_519_rsa_private');
     console.log(chalk.yellow("Private key path: " + identifyFile));
-    result = scpSync (identifyFile, `root@${ansible_IP}:/root/.ssh/js_rsa`);
+    result = scpSync (identifyFile, `root@${serverInfos.ansiblesrv.ip_address}:/root/.ssh/js_rsa`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('scp repo on ansible server'));
     let cm_dir = path.join(__dirname, "..","cm");
     console.log(cm_dir);
-    result = scpSync (cm_dir, `root@${ansible_IP}:/root/DEVOPS-12/cm`, true);
+    result = scpSync (cm_dir, `root@${serverInfos.ansiblesrv.ip_address}:/root/DEVOPS-12/cm`, true);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('scp repo on ansible server'));
     let test_dir = path.join(__dirname, "..","test");
     console.log(test_dir);
-    result = scpSync (test_dir, `root@${ansible_IP}:/root/DEVOPS-12/test`, true);
+    result = scpSync (test_dir, `root@${serverInfos.ansiblesrv.ip_address}:/root/DEVOPS-12/test`, true);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    // console.log(chalk.blueBright('Cloning Repo'));
-    // var ghUsrNamNpwd = `${encodeURIComponent(gh_user)}:${encodeURIComponent(gh_pass)}`;
-    // console.log(ghUsrNamNpwd);
-    // var results = exec(`git clone https://${ghUsrNamNpwd}@github.ncsu.edu/cscdevops-spring2020/DEVOPS-12.git --branch M3`,{user: 'root',host:ansible_IP,key: identifyFile});
-    // await new Promise(r => setTimeout(r, 10000));
-    // // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // Run the setup script
     console.log(chalk.blueBright('Running init script...'));
-    let server_init = '~/DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + ansible_IP + ' ' + 4657 + ' ' + jenkins_IP + ' ' + 8574;
+    let server_init = 'DEVOPS-12/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass) + ' ' + serverInfos.ansiblesrv.ip_address + ' ' + 4657 + ' ' + serverInfos.jenkinssrv.ip_address + ' ' + 8574;
     console.log(server_init);
-    result = sshSync(server_init, `root@${ansible_IP}`);
+    result = sshSync(server_init, `root@${serverInfos.ansiblesrv.ip_address}`);
     // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     // the paths should be from root of cm directory
@@ -99,7 +101,7 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     let inventoryPath = '~/DEVOPS-12/' + 'cm/inventory.ini';
 
     console.log(chalk.blueBright('Running ansible playbook script...'));
-    result = sshSync(`~/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${ansible_IP}`);
+    result = sshSync(`~/DEVOPS-12/cm/run-ansible.sh ${filePath} ${inventoryPath}`, `root@${serverInfos.ansiblesrv.ip_address}`);
     // if( result.error ) { process.exit( result.status ); }
 
 }
