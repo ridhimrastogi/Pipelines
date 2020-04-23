@@ -48,7 +48,7 @@ async function run(status) {
 
          //save sever info to file
          try {
-            fs.writeFileSync("serverInfos.json", JSON.stringify(serverInfos))
+            fs.writeFileSync("cm/serverInfos.json", JSON.stringify(serverInfos))
           } catch (err) {
             console.error(err)
           }
@@ -61,7 +61,7 @@ async function run(status) {
     else if (status == "down") {
 
         try {
-            serverInfos = JSON.parse(fs.readFileSync("serverInfos.json", 'utf8'));            
+            serverInfos = JSON.parse(fs.readFileSync("cm/serverInfos.json", 'utf8'));            
             Object.values(serverInfos).forEach(element => {                 
                 promises.push(provision.destroyDroplet(element.id));
             });

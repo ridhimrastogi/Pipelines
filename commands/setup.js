@@ -53,16 +53,30 @@ exports.handler = async argv => {
 };
 
 async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
-    let serverInfos = JSON.parse(fs.readFileSync("serverInfos.json", 'utf8')); 
+    let serverInfos = JSON.parse(fs.readFileSync("cm/serverInfos.json", 'utf8')); 
     
     console.log(chalk.blueBright('Setup Inventory.ini file'));
-    let inventory_txt = [];
+    let inventory_txt;
+    let inventory_stack = [];
+    //group all servers under initialize
+    inventory_stack.push('[initialize]')
     Object.values(serverInfos).forEach(server => {
-        inventory_txt.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`);
+        if(server.name != 'ansiblesrv') {
+            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root`);
+        }
     });
+    inventory_stack.push(`[initialize:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`)
+    inventory_txt = inventory_stack.join("\n") + '\n\n\n';
+    inventory_stack = [];
+
+    //make each server own group
+    Object.values(serverInfos).forEach(server => {
+        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/js_rsa    ansible_user=root\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'`);
+    });
+    inventory_txt = inventory_txt + inventory_stack.join("\n") + '\n\n\n';
 
     let inventory_path = path.join(__dirname, "..", "cm", "inventory.ini");   
-    fs.writeFile(inventory_path, inventory_txt.join("\n") , function(err) {
+    fs.writeFileSync(inventory_path, inventory_txt, function(err) {
       if(err) throw err;
     });
 
