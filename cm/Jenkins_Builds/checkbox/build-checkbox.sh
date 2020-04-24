@@ -17,12 +17,12 @@ INVENTORY=$2
 
 sudo cp $INVENTORY /etc/jenkins_jobs/.
 jenkins-jobs update $JOB
-curl -X POST -u admin:admin http://${jenkinssrv_IP}/job/checkbox.io/build
+curl -X POST -u admin:admin http://192.168.33.20:9000/job/checkbox.io/build
 sleep 10
 echo "\n"
 for (( ; ; ))
 do
-    OUT=$(curl -s "http://${jenkinssrv_IP}:9000/job/checkbox.io/lastBuild/api/json" | jq -r '.building')
+    OUT=$(curl -s "http://192.168.33.20:9000/job/checkbox.io/lastBuild/api/json" | jq -r '.building')
     if $OUT; then sleep 20; else break; fi
 done
-curl -s http://${jenkinssrv_IP}/job/checkbox.io/lastBuild/consoleText
+curl -s http://192.168.33.20:9000/job/checkbox.io/lastBuild/consoleText

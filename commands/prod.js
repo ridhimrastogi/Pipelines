@@ -27,8 +27,7 @@ async function run(status) {
     let promises = [];
     
     if (status == 'up') {                
-        // let requiredServers =[{serverName: 'monitorsrv', slug: '512mb' },{serverName: 'checkboxiosrv', slug: '512mb' },{serverName: 'itrustsrv', slug: 's-2vcpu-4gb' }];
-        let requiredServers =[{serverName: 'itrustsrv', slug: 's-2vcpu-4gb' }];
+        let requiredServers =[{serverName: 'monitorsrv', slug: '512mb' },{serverName: 'checkboxiosrv', slug: '512mb' },{serverName: 'itrustsrv', slug: 's-2vcpu-4gb' }];
         let serverInfos = {};
         
         console.log(chalk.blueBright('Provisioning required servers...'));

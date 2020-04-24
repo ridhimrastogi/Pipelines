@@ -13,7 +13,7 @@
   gather_facts: yes
   roles:
     - configure-itrust
-    - configure-tomcat
+    - configure-tomcat    
 
 - hosts:  monitorsrv
   gather_facts: yes  
@@ -25,5 +25,12 @@
   roles:
     - configure-mongodb     
     - configure-jenkins
-    - configure-mysql
+    - configure-mysql   
+
+- hosts: checkboxiosrv
+  gather_facts: yes
+  roles:    
+    - configure-checkbox
+    - configure-mongodb
+
 

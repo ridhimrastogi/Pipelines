@@ -1,60 +1,117 @@
 ---
-# setup instructions were obtained from https://www.liquidweb.com/kb/how-to-install-apache-tomcat-9-on-ubuntu-18-04/
-- name: Create a tomcat directory if it does not exist
-  file:
-    path: /opt/tomcat
-    state: directory
-    mode: '0755'
+    - name: ping the build server
+      ping:
 
-- name: Download Tomcat
-  unarchive: 
-    src: apache-tomcat-9.0.34.tar.gz 
-    dest: /opt/tomcat
+    - name: Add tomcat group
+      group:
+        name: tomcat
+        state: present
 
-- name: add group "tomcat"
-  group: name=tomcat
+    - name: Add "tomcat" user
+      user:
+        name: tomcat
+        group: tomcat
+        home: /opt/tomcat
+        shell: /bin/false
+        system: yes
 
+    - name: Download Tomcat
+      get_url:
+        url: http://www-eu.apache.org/dist/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz
+        dest: /tmp
 
-- name: add user "tomcat"
-  user: name=tomcat group=tomcat home=/usr/share/tomcat createhome=no
-  become: True
-  become_method: sudo
+    - name: Extract tomcat archive
+      unarchive:
+        src: /tmp/apache-tomcat-9.0.34.tar.gz
+        dest: /opt/tomcat/
+        owner: tomcat
+        group: tomcat
+        remote_src: yes
+        extra_opts: "--strip-components=1"
 
-# chgrp -R tomcat /opt/tomcat
-- name: Change group ownership of Tomcat installation
-  file: path=/opt/tomcat group=tomcat state=directory recurse=yes
+    - name: Recursively change ownership of a directory
+      file:
+        path: /opt/tomcat/
+        state: directory
+        recurse: yes
+        group: tomcat
 
-# chmod -R g+r conf
-- name: Change folder attributes of Tomcat installation
-  file: path=/opt/tomcat/conf  state=directory recurse=yes mode=g+r
+    - name: Recursively change ownership of internal directories
+      file:
+        path: "{{ dir }}"
+        state: directory
+        recurse: yes
+        group: tomcat
 
-# chmod g+x conf
-- name: Change folder attributes of Tomcat installation
-  file: path=/opt/tomcat/conf  state=directory mode=g+x
+    - name: Recursively change ownership of a conf
+      file:
+        path: /opt/tomcat/conf
+        state: directory
+        recurse: yes
+        group: tomcat
+        mode: g+rx
 
-# chown -R tomcat webapps/ work/ temp/ logs/
-- name: Change ownership of Tomcat installation
-  file: 
-    path: "{{ item }}" 
-    owner: tomcat 
-    state: directory 
-    recurse: yes
-  with_items:
-    - /opt/tomcat
-    - /opt/tomcat/webapps 
-    - /opt/tomcat/work 
-    - /opt/tomcat/temp 
-    - /opt/tomcat/logs 
+    - name: Add tomcat.service file
+      become: yes
+      copy: src=tomcat.service
+                dest=/etc/systemd/system/tomcat.service
 
-- name: Copy Systemd Tomcat.service file
-  copy:
-    src: tomcat.service
-    dest: /etc/systemd/system/tomcat.service
+    - name: Reload daemon, start tomcat service, and enable as system service on boot.
+      systemd:
+            state: started
+            daemon_reload: yes
+            name: tomcat
+            enabled: yes
+      become: yes
 
-- name: Reload System Daemon
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: tomcat
-    enabled: yes
-  become: yes
+    - name: Allow all access to port 8080
+      ufw:
+        rule: allow
+        port: '8080'
+        proto: tcp
+      become: yes
+
+    - name: create manager user for tomcat
+      blockinfile:
+        dest: /opt/tomcat/conf/tomcat-users.xml
+        state: present
+        insertbefore: "</tomcat-users>"
+        block: |
+            <tomcat-users>
+              <user username="tcadmin" password="{{ default_user_pwd }}" roles="manager-gui,admin-gui"/>
+      become: yes
+
+    - name: Allow access to manager from external ip
+      lineinfile:
+        dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+        state: present
+        regexp: '<Valve className="org.apache.catalina.valves.RemoteAddrValve"'
+        line: <!--<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+      become: yes
+
+    - name: Allow access to manager from external ip
+      lineinfile:
+        dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+        state: present
+        regexp: 'allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />'
+        line: allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />-->
+      become: yes
+
+    - name: Reload tomcat service
+      systemd:
+          state: restarted
+          name: tomcat
+      become: yes
+
+    - name: Add tomcat server to maven settings
+      blockinfile:
+        dest: /usr/share/maven/conf/settings.xml
+        state: present
+        insertbefore: "</settings>"
+        block: |1
+          <server>
+            <id>TomcatServer</id>
+            <username>admin</username>
+            <password>password</password>
+          </server>
+      become: yes
