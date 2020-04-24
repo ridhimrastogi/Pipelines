@@ -1,0 +1,60 @@
+---
+# setup instructions were obtained from https://www.liquidweb.com/kb/how-to-install-apache-tomcat-9-on-ubuntu-18-04/
+- name: Create a tomcat directory if it does not exist
+  file:
+    path: /opt/tomcat
+    state: directory
+    mode: '0755'
+
+- name: Download Tomcat
+  unarchive: 
+    src: apache-tomcat-9.0.34.tar.gz 
+    dest: /opt/tomcat
+
+- name: add group "tomcat"
+  group: name=tomcat
+
+
+- name: add user "tomcat"
+  user: name=tomcat group=tomcat home=/usr/share/tomcat createhome=no
+  become: True
+  become_method: sudo
+
+# chgrp -R tomcat /opt/tomcat
+- name: Change group ownership of Tomcat installation
+  file: path=/opt/tomcat group=tomcat state=directory recurse=yes
+
+# chmod -R g+r conf
+- name: Change folder attributes of Tomcat installation
+  file: path=/opt/tomcat/conf  state=directory recurse=yes mode=g+r
+
+# chmod g+x conf
+- name: Change folder attributes of Tomcat installation
+  file: path=/opt/tomcat/conf  state=directory mode=g+x
+
+# chown -R tomcat webapps/ work/ temp/ logs/
+- name: Change ownership of Tomcat installation
+  file: 
+    path: "{{ item }}" 
+    owner: tomcat 
+    state: directory 
+    recurse: yes
+  with_items:
+    - /opt/tomcat
+    - /opt/tomcat/webapps 
+    - /opt/tomcat/work 
+    - /opt/tomcat/temp 
+    - /opt/tomcat/logs 
+
+- name: Copy Systemd Tomcat.service file
+  copy:
+    src: tomcat.service
+    dest: /etc/systemd/system/tomcat.service
+
+- name: Reload System Daemon
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: tomcat
+    enabled: yes
+  become: yes
