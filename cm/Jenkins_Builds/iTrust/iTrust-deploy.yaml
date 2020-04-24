@@ -18,14 +18,9 @@
                 }
                 stage('build'){
                     steps{                                            
-                        sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn -f pom-data.xml process-test-classes'
+                        sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn package'
+                        sh 'cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war /bakerx/cm/deploy/iTrust2.war'
                     }
                 }
             }
-            post{
-                always{
-                    sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn clean test verify org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:checkstyle'
-                }
-            }
-            
         }
