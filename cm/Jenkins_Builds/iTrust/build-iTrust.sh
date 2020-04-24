@@ -26,4 +26,4 @@ do
     OUT=$(curl -s "http://192.168.33.20:9000/job/iTrust/lastBuild/api/json" | jq -r '.building')
     if $OUT; then sleep 20; else break; fi
 done
-curl -s http://${jenkinssrv_IP}/job/iTrust/lastBuild/consoleText
+curl -s http://192.168.33.20:9000/job/iTrust/lastBuild/consoleText
