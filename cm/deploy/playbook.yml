@@ -1,0 +1,29 @@
+---
+
+# see the best practices in ansible docs for how to get started with creating roles etc.: 
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
+
+- hosts: initialize
+  gather_facts: yes
+  roles:
+    - ping
+    - server-setup
+
+- hosts: itrust
+  gather_facts: yes
+  roles:
+    - configure-itrust
+    - configure-tomcat
+
+- hosts:  monitor
+  gather_facts: yes
+  roles:
+    - configure-monitor
+
+- hosts: checkbox
+  gather_facts: yes
+  roles:
+    - configure-checkbox
+    - configure-mongodb
+
+

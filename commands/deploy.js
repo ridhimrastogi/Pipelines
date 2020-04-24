@@ -40,16 +40,7 @@ async function run(project) {
     } else if (project == 'iTrust') {
         console.log(project);
 
-        let ip = getIPAddress();
-        console.log(chalk.greenBright(`Setting host network as ${ip}...`));
-        fs.writeFileSync(path.join(__dirname, "../cm/deploy/ip.txt"), ip);
-
-        // result = scpSync(`/bakerx/cm/deploy/ip.txt`, 'vagrant@192.168.33.20:/home/jenkins/ip.txt');
-        // if (result.error) {
-        //     process.exit(result.status);
-        // }
-
-        let filePath = '/bakerx/cm/Jenkins_Builds/iTrust/iTrust.yaml';
+        let filePath = '/bakerx/cm/Jenkins_Builds/iTrust/iTrust-deploy.yaml';
         let inventorypath = '/bakerx/cm/jenkins_jobs.ini';
         console.log(chalk.blueBright(`Building ${project}...`));
         result = sshSync(`/bakerx/cm/Jenkins_Builds/iTrust/build-iTrust.sh ${filePath} ${inventorypath}`, 'vagrant@192.168.33.20');
@@ -63,20 +54,4 @@ async function run(project) {
     } else {
         console.log("Not yet supported. Try again with checkbox.io or iTrust --gh-user --gh-password")
     }
-
-}
-
-function getIPAddress() {
-    var interfaces = require('os').networkInterfaces();
-    for (var devName in interfaces) {
-        var iface = interfaces[devName];
-
-        for (var i = 0; i < iface.length; i++) {
-            var alias = iface[i];
-            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal)
-                return alias.address;
-        }
-    }
-
-    return '0.0.0.0';
 }
