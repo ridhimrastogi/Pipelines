@@ -1,7 +1,4 @@
 ---
-    - name: ping the build server
-      ping:
-
     - name: Add tomcat group
       group:
         name: tomcat

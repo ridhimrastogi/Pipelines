@@ -1,7 +1,0 @@
----
-packages:
-  - python3-pip
-  - openjdk-8-jdk
-  - maven
-  - mysql-server
-  - libmysql-java
