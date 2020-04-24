@@ -19,3 +19,17 @@
     - configure-mongodb     
     - configure-jenkins
     - configure-mysql   
+
+- hosts: checkboxiosrv
+  gather_facts: yes
+  roles:
+    - ping
+    - configure-checkbox
+    - configure-mongodb
+
+- hosts: itrustsrv
+  gather_facts: yes
+  roles:
+    - ping
+    - configure-itrust
+    - configure-mysql
