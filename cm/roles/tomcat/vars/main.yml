@@ -1,0 +1,6 @@
+---
+    dir:
+      - /opt/tomcat/webapps
+      - /opt/tomcat/work
+      - /opt/tomcat/temp
+      - /opt/tomcat/logs
