@@ -3,6 +3,9 @@ const path = require('path');
 const chalk = require('chalk');
 const provision = require('../lib/provision');
 
+const scpSync = require('../lib/scp');
+const sshSync = require('../lib/ssh');
+
 
 exports.command = 'prod <status>';
 exports.desc = 'provision VMs';
@@ -27,7 +30,7 @@ async function run(status) {
     let promises = [];
     
     if (status == 'up') {                
-        let requiredServers =[{serverName: 'monitorsrv', slug: '512mb' },{serverName: 'checkboxiosrv', slug: '512mb' },{serverName: 'itrustsrv', slug: 's-2vcpu-4gb' }];
+        let requiredServers =[{serverName: 'monitor', slug: '512mb' },{serverName: 'checkbox', slug: '512mb' },{serverName: 'itrust', slug: 's-2vcpu-4gb' }];
         let serverInfos = {};
         
         console.log(chalk.blueBright('Provisioning required servers...'));
@@ -55,7 +58,7 @@ async function run(status) {
 
         await new Promise(r => setTimeout(r, 30000)); //give servers time to boot
 
-
+        configureMonitor();  //configure the Monitor server
         // if( result.error ) { console.log(result.error); process.exit( result.status ); }
     } 
     else if (status == "down") {
@@ -81,31 +84,27 @@ async function run(status) {
 }
 
 async function updateInventory(serverInfos){
-    let inventory_txt;
     let inventory_stack = [];
-
-    serverInfos["jenkinssrv"] = {id: 0, ip_address: "192.168.33.20", name: "jenkinssrv", private_key: "js_rsa", user: "vagrant"}; //inject local jenkins server
-
-    inventory_stack.push('[initialize]')
-    Object.values(serverInfos).forEach(server => {
-        if(server.name != 'ansiblesrv') {
-            inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key} ansible_user=${server.user}`);
-        }
-    });
-    inventory_stack.push('[initialize:vars]');
-    inventory_stack.push(`ansible_ssh_common_args='-o StrictHostKeyChecking=no'`)    
-    inventory_stack.push('ansible_python_interpreter=python3');
-    inventory_txt = inventory_stack.join("\n") + '\n\n\n';
-    inventory_stack = [];
 
     //make each server own group
     Object.values(serverInfos).forEach(server => {
         inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
     });
-    inventory_txt = inventory_txt + inventory_stack.join("\n") + '\n\n\n';
 
-    let inventory_path = path.join(__dirname, "..", "cm", "inventory.ini");   
+    inventory_txt = inventory_stack.join("\n") + '\n\n\n';
+
+    let inventory_path = path.join(__dirname, "..", "cm", "deploy-inventory.ini");
     fs.writeFileSync(inventory_path, inventory_txt, function(err) {
       if(err) throw err;
     });
+}
+
+function configureMonitor(){
+    let filePath =  '/bakerx/' + 'cm/playbook.yml';
+    let inventory_path = '/bakerx/cm/deploy-inventory.ini';
+    console.log(chalk.blueBright(`Congifuring the moinitor server`));
+    let result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory_path}`, 'vagrant@192.168.33.10');
+    if (result.error) {
+        process.exit(result.status);
+    }
 }
