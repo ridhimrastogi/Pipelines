@@ -19,7 +19,7 @@
                 stage('build'){
                     steps{                                            
                         sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn package'
-                        sh 'cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war /bakerx/cm/deploy/iTrust2.war'
+                        sh 'sudo cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war /bakerx/cm/roles/deploy-itrust/files/iTrust2.war'
                     }
                 }
             }
