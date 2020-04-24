@@ -88,7 +88,7 @@ async function updateInventory(serverInfos){
 
     inventory_stack.push('[initialize]')
     Object.values(serverInfos).forEach(server => {
-        if(server.name == 'jenkinssrv' || server.name == 'monitorsrv') {
+        if(server.name != 'ansiblesrv') {
             inventory_stack.push(`${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key} ansible_user=${server.user}`);
         }
     });

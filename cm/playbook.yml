@@ -1,4 +1,5 @@
 ---
+
 # see the best practices in ansible docs for how to get started with creating roles etc.: 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
@@ -7,6 +8,12 @@
   roles:
     - ping   
     - server-setup
+
+- hosts: itrustsrv
+  gather_facts: yes
+  roles:
+    - configure-itrust
+    - configure-tomcat    
 
 - hosts:  monitorsrv
   gather_facts: yes  
@@ -22,14 +29,8 @@
 
 - hosts: checkboxiosrv
   gather_facts: yes
-  roles:
-    - ping
+  roles:    
     - configure-checkbox
     - configure-mongodb
 
-- hosts: itrustsrv
-  gather_facts: yes
-  roles:
-    - ping
-    - configure-itrust
-    - configure-mysql
+
