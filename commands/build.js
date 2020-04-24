@@ -29,19 +29,19 @@ async function run(project) {
     // the paths should be from root of cm directory
     // Transforming path of the files in host to the path in VM's shared folder
     if (project == 'checkbox.io') {
-        let filePath = '~/DEVOPS-12/cm/Jenkins_Builds/checkbox/checkbox.yaml';
-        let inventorypath = '~/DEVOPS-12/cm/jenkins_jobs.ini';
+        let filePath = '/bakerx/cm/Jenkins_Builds/checkbox/checkbox.yaml';
+        let inventorypath = '/bakerx/cm/jenkins_jobs.ini';
         console.log(chalk.blueBright(`Building ${project}...`));
-        let result = sshSync(`~/DEVOPS-12/cm/Jenkins_Builds/checkbox/build-checkbox.sh ${filePath} ${inventorypath}`, `root@${process.env.jenkinssrv_IP}`);
+        let result = sshSync(`/bakerx/cm/Jenkins_Builds/checkbox/build-checkbox.sh ${filePath} ${inventorypath}`, 'vagrant@192.168.33.20');
         if (result.error) { process.exit(result.status); }
     }
     
     else  if (project == 'iTrust') {
         console.log(project);
-        let filePath = '~/DEVOPS-12/cm/Jenkins_Builds/iTrust/iTrust.yaml';
-        let inventorypath = '~/DEVOPS-12/cm/jenkins_jobs.ini';
+        let filePath = '/bakerx/cm/Jenkins_Builds/iTrust/iTrust.yaml';
+        let inventorypath = '/bakerx/cm/jenkins_jobs.ini';
         console.log(chalk.blueBright(`Building ${project}...`));
-        let result = sshSync(`~/DEVOPS-12/cm/Jenkins_Builds/iTrust/build-iTrust.sh ${filePath} ${inventorypath}`, `root@${process.env.jenkinssrv_IP}`);
+        let result = sshSync(`/bakerx/cm/Jenkins_Builds/iTrust/build-iTrust.sh ${filePath} ${inventorypath}`, 'vagrant@192.168.33.20');
         // if (result.error) { process.exit(result.status); 
         }
     
