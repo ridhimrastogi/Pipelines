@@ -1,0 +1,13 @@
+---
+- name: Wait for 1 min
+  pause:
+    minutes: 1
+
+- name: Delete all PM2 processes
+  command: pm2 delete all
+  
+- name: Start checkbox.io as PM2 process
+  command: pm2 start server.js  
+  args:  
+    chdir: /root/checkbox.io/server-side/site
+  become: yes
