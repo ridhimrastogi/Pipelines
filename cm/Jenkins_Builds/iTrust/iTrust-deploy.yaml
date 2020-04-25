@@ -16,6 +16,11 @@
                         sh 'sudo chmod 777 /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/email.properties'
                     }
                 }
+                stage('build'){
+                    steps{
+                        sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn -f pom-data.xml process-test-classes'
+                    }
+                }
                 stage('deploy'){
                     steps{
                         sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn package'
