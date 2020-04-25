@@ -1,0 +1,57 @@
+---
+- name: Clone checkbox.io repo
+  git:
+    repo: https://github.com/chrisparnin/checkbox.io.git
+    dest: /root/checkbox.io
+  become: yes
+
+- name: Start mongodb service
+  systemd: 
+    state: started
+    name: mongodb
+    enabled: yes
+  become: yes
+
+- name: Install checkbox.io app
+  npm:
+    path: /root/checkbox.io/server-side/site
+  become: yes
+
+- name: Update permissions for checkbox.io app
+  file: 
+    path: /root/
+    state: directory
+    recurse: yes
+    mode: u=rwX,g=rX,o=rX
+
+- name: Add nginx configuration file
+  become: yes
+  template: src=default
+            dest=/etc/nginx/sites-available/default
+
+- name: Restart nginx service
+  systemd: 
+    state: restarted
+    name: nginx
+    enabled: yes
+  become: yes
+
+- name: Start checkbox.io as PM2 process
+  command: pm2 start server.js  
+  args:  
+    chdir: /root/checkbox.io/server-side/site
+  become: yes
+
+- name: Wait for 1 min
+  pause:
+    minutes: 1
+
+- name: Delete all PM2 processes
+  command: pm2 delete all
+  
+- name: Start checkbox.io as PM2 process
+  command: pm2 start server.js  
+  args:  
+    chdir: /root/checkbox.io/server-side/site
+  become: yes
+  
