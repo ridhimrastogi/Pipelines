@@ -2,5 +2,12 @@
     - name: Copy the war file to tomcat
       copy:
         src: iTrust2.war
-        dest:
-        state: present
+        dest: /opt/tomcat/webapps/iTrust2.war
+      become: yes
+
+    - name: Reload tomcat service
+      systemd:
+          state: restarted
+          name: tomcat
+      become: yes
+

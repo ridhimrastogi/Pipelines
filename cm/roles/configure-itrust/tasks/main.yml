@@ -48,6 +48,11 @@
     update_cache: false
   become: yes
 
+- name: Install chrome binary
+  apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  become: yes
+
 - name: Install mySQL support.
   pip:
     name: PyMySQL
