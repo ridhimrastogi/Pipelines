@@ -16,8 +16,8 @@
                         sh 'sudo chmod 777 /var/lib/jenkins/workspace/iTrust/iTrust2/src/main/java/email.properties'
                     }
                 }
-                stage('build'){
-                    steps{                                            
+                stage('deploy'){
+                    steps{
                         sh 'cd /var/lib/jenkins/workspace/iTrust/iTrust2 && sudo mvn package'
                         sh 'sudo cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2.war /bakerx/cm/roles/deploy-itrust/files/iTrust2.war'
                     }

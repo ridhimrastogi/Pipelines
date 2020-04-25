@@ -18,6 +18,7 @@
     - configure-itrust
     - configure-mysql
     - configure-tomcat
+    - deploy-itrust
 
 - hosts:  monitor
   gather_facts: yes

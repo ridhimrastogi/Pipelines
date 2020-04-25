@@ -56,7 +56,7 @@ async function run(status) {
             console.error(err)
           }
 
-        await new Promise(r => setTimeout(r, 30000)); //give servers time to boot
+        await new Promise(r => setTimeout(r, 50000)); //give servers time to boot
 
         configureMonitor();  //configure the Monitor server
         // if( result.error ) { console.log(result.error); process.exit( result.status ); }
