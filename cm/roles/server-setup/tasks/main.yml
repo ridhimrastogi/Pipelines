@@ -87,6 +87,12 @@
     global: yes
   become: yes
 
+- name: Install Forever.
+  npm:
+    name: forever
+    global: yes
+  become: yes
+
 - name: Install mongo support.
   pip:
     name: pymongo

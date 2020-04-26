@@ -3,7 +3,7 @@ const os   = require('os');
 
 const child = require('child_process');
 
-let identifyFile = path.join(os.homedir(), '.bakerx', 'baker_rsa');
+let identifyFile = path.join(os.homedir(), '.ssh', 'csc_519_rsa_private');
 
 module.exports = function(port, src, dest) {
     

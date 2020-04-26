@@ -37,7 +37,7 @@ async function main(name)
 {
     let agent = new Agent();
 
-    let connection = redis.createClient(6379, '192.168.44.92', {})
+    let connection = redis.createClient(6379, process.env.MONITOR_IP, {})
     connection.on('error', function(e)
     {
         console.log(e);

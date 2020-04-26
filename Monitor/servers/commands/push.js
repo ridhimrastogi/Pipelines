@@ -2,6 +2,7 @@
 const child = require('child_process');
 const chalk = require('chalk');
 const path = require('path');
+const fs = require('fs');
 
 const sshSync = require('../lib/ssh');
 const scpSync = require('../lib/scp');
@@ -33,28 +34,35 @@ async function run() {
     let agentJS = path.join(__dirname, '../../agent/index.js');
     let package = path.join(__dirname, '../../agent/package.json');
 
-    let servers = ['alpine-01', 'alpine-02', 'alpine-03'];
-    for( let server of servers )
-    {
-        let port=await VBox.getSSHPort(server);
+    // let servers = ['alpine-01', 'alpine-02', 'alpine-03'];
 
-        console.log(chalk.keyword('pink')(`Updated agent on server: ${server}`));
+    let servers = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos.json", 'utf8')); 
+
+    Object.values(servers).forEach(server => 
+    {
+        let port=22;
+
+        console.log(chalk.keyword('pink')(`Updated agent on server: ${server.name}`));
         // agent/index.js
-        result = scpSync (port, agentJS, 'root@localhost:/root/agent.js');
+        result = scpSync (port, agentJS, `root@${server.ip_address}:/root/agent.js`);
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
         // agent/package.json
-        result = scpSync (port, package, 'root@localhost:/root/package.json');
+        result = scpSync (port, package, `root@${server.ip_address}:/root/package.json`);
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
         if( process.platform=='win32')
-            result = sshSync(`"npm install && forever stopall && forever start agent.js ${server}"`, 'root@localhost', port);
+        {
+            result = sshSync(`"if forever list | grep -q agent.js; then forever stop agent.js; fi"`, `root@${server.ip_address}`, port);
+            result = sshSync(`"npm install && forever start agent.js ${server.name}"`, `root@${server.ip_address}`, port);
+        }
         else
         {
-            result = sshSync(`'npm install && forever stopall && forever start agent.js ${server}'`, 'root@localhost', port);
+            result = sshSync(`'if forever list | grep -q agent.js; then forever stop agent.js; fi'`, `root@${server.ip_address}`, port);
+            result = sshSync(`'npm install && forever start agent.js ${server.name}'`, `root@${server.ip_address}`, port);
         }
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    }
+    });
 
 
 

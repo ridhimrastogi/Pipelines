@@ -14,8 +14,9 @@
 
 - hosts: itrust
   gather_facts: yes
-  roles:
+  roles:   
     - configure-itrust
+    - configure-monitor-client
     - configure-mysql
     - configure-tomcat
     - deploy-itrust
@@ -25,10 +26,18 @@
   roles:
     - server-setup
     - configure-monitor
+    - configure-monitor-client
 
 - hosts: checkbox
   gather_facts: yes
   roles:
     - configure-checkbox
     - configure-mongodb
+    - configure-monitor-client
     - deploy-checkbox
+
+
+- hosts: monitor-push
+  gather_facts: yes
+  roles:
+    - monitor-push-agent

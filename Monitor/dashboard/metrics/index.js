@@ -5,26 +5,15 @@ const fs = require('fs');
 const path = require('path');
 const Stopwatch = require('statman-stopwatch');
 
-// We need your host computer ip address in order to use port forwards to servers.
-let ip = ''
-try
-{
-	ip = fs.readFileSync(path.join(__dirname,'ip.txt')).toString();
-}
-catch(e)
-{
-	console.log(e);
-	throw new Error("Missing required ip.txt file");	
-}
-
 /// Servers data being monitored.
-var servers = 
-[
-	{name: "computer", status: "#cccccc", scoreTrend : []},
-	{name: "alpine-01",url:`http://${ip}:9001/`, status: "#cccccc",  scoreTrend : [0]},
-	{name: "alpine-02",url:`http://${ip}:9002/`, status: "#cccccc",  scoreTrend : [0]},
-	{name: "alpine-03",url:`http://${ip}:9003/`, status: "#cccccc",  scoreTrend : [0]}
-];
+var servers = [];
+
+let serverInfos = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos.json", 'utf8')); 
+
+Object.values(serverInfos).forEach(server => 
+	{
+		servers.push({name: server.name, url:`http://${server.ip_address}/`, status: "#cccccc",  scoreTrend : [0]});
+	});
 
 
 function start(app)

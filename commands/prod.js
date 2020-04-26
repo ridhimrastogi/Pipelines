@@ -86,6 +86,11 @@ async function run(status) {
 async function updateInventory(serverInfos){
     let inventory_stack = [];
 
+    //add monitor-push groput
+    let server = serverInfos['monitor'];
+    inventory_stack.push(`[monitor-push]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
+
+
     //make each server own group
     Object.values(serverInfos).forEach(server => {
         inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
@@ -102,7 +107,7 @@ async function updateInventory(serverInfos){
 function configureMonitor(){
     let filePath =  '/bakerx/' + 'cm/playbook.yml';
     let inventory_path = '/bakerx/cm/deploy-inventory.ini';
-    console.log(chalk.blueBright(`Congifuring the moinitor server`));
+    console.log(chalk.blueBright(`Congifuring the monitor server`));
     let result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory_path}`, 'vagrant@192.168.33.10');
     if (result.error) {
         process.exit(result.status);
