@@ -1,4 +1,3 @@
 node_modules/
 *.retry
-*.war
 .DS_Store
