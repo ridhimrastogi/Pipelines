@@ -88,7 +88,7 @@ async function updateInventory(serverInfos){
 
     //add monitor-push groput
     let server = serverInfos['monitor'];
-    inventory_stack.push(`[monitor-push]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
+    inventory_stack.push(`[monnitorpush]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[monnitorpush:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
 
 
     //make each server own group
