@@ -17,6 +17,33 @@
             dest=Monitor
             mode=0777
 
+- name: Copy private key
+  become: yes
+  copy:
+    src: /home/vagrant/.ssh/csc_519_rsa_private
+    dest: /root/.ssh/csc_519_rsa_private
+    mode: 0700
+
+- name: Copy ServerInfo json
+  become: yes
+  copy:
+    src: ../../serverInfos.json
+    dest: Monitor/servers/serverInfos.json
+
+- name: Copy Redis Config
+  become: yes
+  copy:
+    src: redis.conf
+    dest: /etc/redis/redis.conf
+
+- name: Restart Redis server
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: redis
+    enabled: yes
+  become: yes
+
 - name: Install server packages
   npm:
     path: Monitor/Servers
@@ -29,14 +56,17 @@
   npm:
     path: Monitor/dashboard
 
+- name: Push agents to remote servers
+  shell: nodejs Monitor/servers/index.js push
+
 - name: "Install forever (to run Node.js app)."
   npm: name=forever global=yes state=present
    
 - name: "Check list of Node.js apps running."
   command: forever list
   register: forever_list
-  changed_when: false
+  # changed_when: false
 
-- name: "Start example Node.js app."
+- name: "Start Monitor server"
   command: forever start Monitor/dashboard/bin/www
   when: "forever_list.stdout.find('Monitor/dashboard/bin/www') == -1"
