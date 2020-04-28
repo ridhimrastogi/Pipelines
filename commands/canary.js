@@ -36,7 +36,7 @@ async function run(blue, green) {
     console.log(chalk.blueBright('Provisioning required servers...'));
     requiredServers.forEach(server => {
         console.log(chalk.yellow('Provisioning server ' + server.serverName));
-        promises.push(provision.createDroplet(server.serverName, server.slug) );
+        promises.push(provision.createDroplet(server.serverName, server.slug));
     });
 
 
@@ -48,43 +48,42 @@ async function run(blue, green) {
         }
         });
 
-    await updateInventory(serverInfos);
+    await updateInventory(serverInfos, blue, green);
+    try {
+        fs.writeFileSync("cm/canary-analysis/serverInfos.json", JSON.stringify(serverInfos))
+      } catch (err) {
+        console.error(err)
+      }
 
     await new Promise(r => setTimeout(r, 50000)); //give servers time to boot
 
-    configureServers(blue, green);  //configure the servers
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
-
-    // the paths should be from root of cm directory
-    // Transforming path of the files in host to the path in VM's shared folder
-    // let filePath = '/bakerx/' + 'cm/playbook.yml';
-    // let inventoryPath = '/bakerx/' + 'cm/jenkins-inventory.ini';
-
-    // console.log(chalk.blueBright('Running ansible playbook script...'));
-    // result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
-    // if( result.error ) { process.exit( result.status ); }
-
+    configureServers();  //configure the servers
 }
 
-async function updateInventory(serverInfos){
+async function updateInventory(serverInfos, blue, green){
     let inventory_stack = [];
-
+    let branch = '';
     //make each server own group
     Object.values(serverInfos).forEach(server => {
-        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
+        branch = '';
+        if(server.name == 'blue')
+            branch = blue
+        else if(server.name == 'green')
+            branch = green
+        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3\nbranch=${branch}`);
     });
 
     inventory_txt = inventory_stack.join("\n") + '\n\n\n';
 
-    let inventory_path = path.join(__dirname, "..", "cm", "canary-inventory.ini");
+    let inventory_path = path.join(__dirname, "..", "cm", "canary-analysis", "canary-inventory.ini");
     fs.writeFileSync(inventory_path, inventory_txt, function(err) {
       if(err) throw err;
     });
 }
 
 function configureServers(blue, green){
-    let filePath =  '/bakerx/' + 'cm/playbook.yml';
-    let inventory_path = '/bakerx/cm/canary-inventory.ini';
+    let filePath =  '/bakerx/' + 'cm/canary-analysis/playbook.yml';
+    let inventory_path = '/bakerx/cm/canary-analysis/canary-inventory.ini';
     console.log(chalk.blueBright(`Congifuring the servers`));
     let result = sshSync(`/bakerx/cm/canary-analysis/configure.sh ${filePath} ${inventory_path} ${blue} ${green}`, 'vagrant@192.168.33.10');
     if (result.error) {

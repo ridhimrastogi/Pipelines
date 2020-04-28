@@ -21,19 +21,14 @@
     - configure-tomcat
     - deploy-itrust
 
-- hosts:
-    monitor
-    heartbeat
+- hosts: monitor
   gather_facts: yes
   roles:
     - server-setup
     - configure-monitor
     - configure-monitor-client
 
-- hosts:
-    checkbox
-    blue
-    green
+- hosts: checkbox
   gather_facts: yes
   roles:
     - configure-checkbox
