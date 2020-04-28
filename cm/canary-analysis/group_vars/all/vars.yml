@@ -1,0 +1,24 @@
+---
+os_environment:
+    - key: APP_PORT
+      value : 3002
+    - key: MONGO_PORT
+      value : 27017
+    - key: MONGO_USER
+      value : mongodb_admin_user
+    - key: MONGO_PASSWORD
+      value : "{{ default_user_pwd }}"
+    - key: MONGO_IP
+      value : "localhost"
+    - key:  GH_USER
+      value: "{{ lookup('env','GH_USER')  }}"
+    - key:  GH_PWD
+      value: "{{ lookup('env','GH_PWD')   }}"
+    - key:  GM_USER
+      value: "{{ lookup('env','GM_USER') if ( lookup('env','GM_USER') ) else 'halfheartedtrebel' }}"
+    - key:  GM_PWD
+      value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}"
+    - key:  MONITOR_IP
+      value: "{{ (lookup('file', '../../serverInfos.json') | from_json).monitor.ip_address }}"
+
+jenkinssrv_IP: "192.168.33.20"
