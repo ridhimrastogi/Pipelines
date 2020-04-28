@@ -74,3 +74,10 @@
 - name: "Start Monitor server"
   command: forever start heartbeat/dashboard/bin/www
   when: "forever_list.stdout.find('heartbeat/dashboard/bin/www') == -1"
+
+- name: Clone checkbox.io repo
+  git:
+    repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
+    dest: /root/checkbox.io-micro-preview
+    version: "{{ branch }}"
+  become: yes
