@@ -1,0 +1,6 @@
+---
+- name: Generate traffic on  a server
+  command: siege -t300s --content-type "application/json" 'http://localhost:3000/preview POST  < resources/survey.json'
+  args:
+    chdir: /root/checkbox.io-micro-preview/test
+  throttle: 1

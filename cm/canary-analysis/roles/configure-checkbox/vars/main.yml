@@ -4,3 +4,4 @@ packages:
   #- mongodb
   - nodejs
   - nginx
+  - siege

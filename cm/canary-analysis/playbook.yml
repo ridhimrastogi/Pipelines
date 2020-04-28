@@ -16,7 +16,7 @@
     - configure-checkbox
     #- configure-monitor-client
     - deploy-checkbox
-
+    - generate-traffic
 # - hosts: heartbeat-push
 #   gather_facts: yes
 #   roles:
