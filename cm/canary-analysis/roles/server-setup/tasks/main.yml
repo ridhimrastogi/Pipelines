@@ -12,14 +12,14 @@
     line: "vagrant ALL=(ALL) NOPASSWD: ALL"
   become: yes
 
-# - name: populate environment variables.
-#   lineinfile:
-#     dest: "/etc/environment"
-#     state: present
-#     regexp: "^{{ item.key }}="
-#     line: "{{ item.key }}={{ item.value}}"
-#   with_items: "{{ os_environment }}"
-#   become: yes
+- name: populate environment variables.
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value}}"
+  with_items: "{{ os_environment }}"
+  become: yes
 
 - name: Update and upgrade apt packages.
   apt:
