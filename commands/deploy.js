@@ -39,16 +39,25 @@ async function run(project, inventory) {
         if (result.error) {
             process.exit(result.status);
         }
+
+        //add monitor
+        filePath =  '/bakerx/cm/playbook_monitor_push.yml';
+        console.log(chalk.yellow(`Pushing Monitor agent to ${project}`));
+        result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.10');
+        if (result.error) {
+            process.exit(result.status);
+        }
+
     } else if (project == 'iTrust') {
         console.log(project);
 
         let filePath = '/bakerx/cm/Jenkins_Builds/iTrust/iTrust-deploy.yaml';
         let inventorypath = '/bakerx/cm/jenkins_jobs.ini';
         console.log(chalk.blueBright(`Building ${project}...`));
-        // let result = sshSync(`/bakerx/cm/Jenkins_Builds/iTrust/build-iTrust.sh ${filePath} ${inventorypath}`, 'vagrant@192.168.33.20');
-        // if (result.error) {
-        //     process.exit(result.status);
-        // }
+        let result = sshSync(`/bakerx/cm/Jenkins_Builds/iTrust/build-iTrust.sh ${filePath} ${inventorypath}`, 'vagrant@192.168.33.20');
+        if (result.error) {
+            process.exit(result.status);
+        }
 
         filePath =  '/bakerx/cm/playbook.yml';       
         console.log(chalk.blueBright(`Deploying ${project}...`));
@@ -57,6 +66,7 @@ async function run(project, inventory) {
             process.exit(result.status);
         }
 
+        //add monitor
         filePath =  '/bakerx/cm/playbook_monitor_push.yml';
         console.log(chalk.yellow(`Pushing Monitor agent to ${project}`));
         result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.10');
