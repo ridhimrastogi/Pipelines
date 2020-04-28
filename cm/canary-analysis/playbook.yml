@@ -22,7 +22,12 @@
   roles:
     - heartbeat-push-agent
 
-- hosts: blue:green
+- hosts: blue
+  gather_facts: yes
+  roles:
+    - generate-traffic
+
+- hosts: green
   gather_facts: yes
   roles:
     - generate-traffic
