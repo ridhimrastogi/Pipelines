@@ -12,7 +12,12 @@ let serverInfos = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos.json",
 
 Object.values(serverInfos).forEach(server => 
 	{
-		servers.push({name: server.name, url:`http://${server.ip_address}/`, status: "#cccccc",  scoreTrend : [0]});
+		servers.push({name: server.name, 
+			url:`http://${server.ip_address}/`, 
+			status: "#cccccc",  
+			scoreTrend : [0],
+			end_point_url: server.end_point_url
+		});
 	});
 
 
@@ -86,7 +91,7 @@ function start(app)
 
 				// Make request to server we are monitoring.
 				const stopwatch = new Stopwatch(true);
-				got(server.url, {timeout: 5000, throwHttpErrors: false}).then(function(res)
+				got(server.end_point_url, {timeout: 5000, throwHttpErrors: false}).then(function(res)
 				{
 					// TASK 2
 					captureServer.statusCode = res.statusCode;
@@ -107,13 +112,14 @@ function updateHealth(server)
 {
 	let score = 0;
 	// Update score calculation.
-	let pts_memoryLoad = 1 - (server.memoryLoad / 100);
+	let pts_memoryLoad = server.memoryLoad <= 50 ? 1 : 0;
 	let pts_cpu = 1 - (server.cpu / 100);
 	let pts_statusCode = server.statusCode == 200 ? 1 : 0;
 	let latency_err = Math.abs(server.latency - 15) / 15;
 	let pts_latency = server.latency <= 15 ? 1 : latency_err > 0 && latency_err <= 1 ? 1 - latency_err : 0;
 
-	score = pts_memoryLoad + pts_cpu + pts_statusCode + pts_latency;
+	score = server.statusCode == 200 ? pts_memoryLoad + pts_cpu + pts_statusCode + pts_latency : 0; 
+	
 
 	server.status = score2color(score/4);
 

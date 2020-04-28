@@ -43,7 +43,12 @@ async function run(status) {
         await Promise.all(promises).then(function (data) { 
             for (let index = 0; index < requiredServers.length; index++) {
                 let dropletInfo = data[index];                
-                serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name, private_key: "csc_519_rsa_private", user: "root"};
+                serverInfos[dropletInfo.name] = {
+                    id: dropletInfo.id, 
+                    ip_address: dropletInfo.ip_address,
+                    name: dropletInfo.name,
+                     private_key: "csc_519_rsa_private", 
+                     user: "root"};
                 //console.log(`ID: ${dropletInfo.id} ServerName: ${dropletInfo.name} IP_Address: ${dropletInfo.ip_address}`);
             }            
          });
@@ -51,6 +56,27 @@ async function run(status) {
          await updateInventory(serverInfos);
          //save sever info to file
          try {
+            //push end point url for monitoring server
+            Object.values(serverInfos).forEach(server => {                 
+               let end_point = `http://${server.ip_address}`;
+                switch (server.name) {
+                    case 'itrust':
+                        end_point = `http://${server.ip_address}:8080/iTrust2`
+                        
+                        break;
+                    case 'checkbox':
+                        end_point = `http://${server.ip_address}`
+                        
+                        break;
+                
+                    default:
+                        break;
+                }
+
+                server.end_point_url = end_point;
+            });
+
+
             fs.writeFileSync("cm/serverInfos.json", JSON.stringify(serverInfos))
           } catch (err) {
             console.error(err)
@@ -85,11 +111,6 @@ async function run(status) {
 
 async function updateInventory(serverInfos){
     let inventory_stack = [];
-
-    //add monitor-push groput
-    let server = serverInfos['monitor'];
-    inventory_stack.push(`[monitor-push]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3`);
-
 
     //make each server own group
     Object.values(serverInfos).forEach(server => {

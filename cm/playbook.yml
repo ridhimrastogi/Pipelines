@@ -40,9 +40,3 @@
     - configure-mongodb
     - configure-monitor-client
     - deploy-checkbox
-
-
-- hosts: monitor-push
-  gather_facts: yes
-  roles:
-    - monitor-push-agent

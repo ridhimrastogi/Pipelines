@@ -67,6 +67,10 @@
   register: forever_list
   # changed_when: false
 
+- name: "Stop Monitor server if running"
+  command: forever stop Monitor/dashboard/bin/www
+  when: "forever_list.stdout.find('Monitor/dashboard/bin/www') >= 0"
+
 - name: "Start Monitor server"
   command: forever start Monitor/dashboard/bin/www
-  when: "forever_list.stdout.find('Monitor/dashboard/bin/www') == -1"
+  # when: "forever_list.stdout.find('Monitor/dashboard/bin/www') == -1"
