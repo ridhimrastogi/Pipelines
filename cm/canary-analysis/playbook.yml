@@ -3,21 +3,31 @@
 # see the best practices in ansible docs for how to get started with creating roles etc.: 
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
 
-# - hosts: heartbeat
-#   gather_facts: yes
-#   roles:
-#     - server-setup
-#     # - configure-monitor
-#     # - configure-monitor-client
+- hosts: heartbeat
+  gather_facts: yes
+  roles:
+    - server-setup
+    - configure-heartbeat
+    - configure-heartbeat-client
 
 - hosts: blue:green
   gather_facts: yes
   roles:
     - configure-checkbox
-    #- configure-monitor-client
+    - configure-heartbeat-client
     - deploy-checkbox
+
+- hosts: heartbeat
+  gather_facts: yes
+  roles:
+    - heartbeat-push-agent
+
+- hosts: blue
+  gather_facts: yes
+  roles:
     - generate-traffic
-# - hosts: heartbeat-push
-#   gather_facts: yes
-#   roles:
-#     - monitor-push-agent
+
+- hosts: green
+  gather_facts: yes
+  roles:
+    - generate-traffic

@@ -50,6 +50,22 @@ async function run(blue, green) {
 
     await updateInventory(serverInfos, blue, green);
     try {
+        //push end point url for monitoring server
+        Object.values(serverInfos).forEach(server => {                 
+           let end_point = `http://${server.ip_address}`;
+            switch (server.name) {
+                case 'blue':
+                case 'green':
+                    end_point = `http://${server.ip_address}:3000/preview`
+                    break;
+                default:
+                    break;
+            }
+
+            server.end_point_url = end_point;
+        });
+
+
         fs.writeFileSync("cm/canary-analysis/serverInfos.json", JSON.stringify(serverInfos))
       } catch (err) {
         console.error(err)

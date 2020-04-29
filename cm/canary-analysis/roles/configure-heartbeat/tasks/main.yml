@@ -1,0 +1,83 @@
+---
+- name: Installing required packages.
+  apt:
+    pkg: "{{packages}}"
+    state: present
+  become: yes
+
+- name: Create heartbeat a directory if it does not exist
+  file:
+    path: heartbeat
+    state: directory
+    mode: '0755'
+
+- name: Copy heartbeat zip
+  become: yes
+  copy: 
+    src: heartbeat.zip
+    dest: /root/heartbeat.zip
+    mode: 0777
+
+- name: Unzips folder
+  command: unzip /root/heartbeat.zip 
+
+- name: Copy private key
+  become: yes
+  copy:
+    src: /home/vagrant/.ssh/csc_519_rsa_private
+    dest: /root/.ssh/csc_519_rsa_private
+    mode: 0700
+
+- name: Copy ServerInfo json
+  become: yes
+  copy:
+    src: ../../serverInfos.json
+    dest: heartbeat/servers/serverInfos.json
+
+- name: Copy Redis Config
+  become: yes
+  copy:
+    src: redis.conf
+    dest: /etc/redis/redis.conf
+
+- name: Restart Redis server
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: redis
+    enabled: yes
+  become: yes
+
+- name: Install server packages
+  npm:
+    path: heartbeat/servers
+
+- name: Install agent packages
+  npm:
+    path: heartbeat/agent
+
+- name: Install dashboard packages
+  npm:
+    path: heartbeat/dashboard
+
+- name: Push agents to remote servers
+  shell: nodejs heartbeat/servers/index.js push
+
+- name: "Install forever (to run Node.js app)."
+  npm: name=forever global=yes state=present
+   
+- name: "Check list of Node.js apps running."
+  command: forever list
+  register: forever_list
+  # changed_when: false
+
+- name: "Start Monitor server"
+  command: forever start heartbeat/dashboard/bin/www
+  when: "forever_list.stdout.find('heartbeat/dashboard/bin/www') == -1"
+
+- name: Clone checkbox.io repo
+  git:
+    repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
+    dest: /root/checkbox.io-micro-preview
+    version: "{{ branch }}"
+  become: yes
