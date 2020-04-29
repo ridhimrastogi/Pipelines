@@ -1,8 +1,8 @@
 ---
-- name: Set timezone to America/New_York
-  timezone:
-    name: America/New_York
-  become: yes
+# - name: Set timezone to America/New_York
+#   timezone:
+#     name: America/New_York
+#   become: yes
 
 - name: populate environment variables.
   lineinfile:
@@ -11,26 +11,6 @@
     regexp: "^{{ item.key }}="
     line: "{{ item.key }}={{ item.value}}"
   with_items: "{{ os_environment }}"
-  become: yes
-
-- name: Update and upgrade apt packages.
-  apt:
-    upgrade: yes
-    update_cache: yes
-  become: yes
-
-- name: add nodejs key.
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
-  become: yes
-
-- name: update NodeJS Source List.
-  apt_repository:
-    repo: deb https://deb.nodesource.com/node_12.x bionic main
-    filename: nodesource
-    update_cache: yes
-    state: present
   become: yes
 
 - name: Installing required packages.
@@ -44,20 +24,8 @@
     update_cache: yes
   become: yes
 
-- name: start nginx
-  service:
-    name: nginx
-    state: started
-  become: yes
-
 - name: Install PM2.
   npm:
     name: pm2
     global: yes
   become: yes
-
-# - name: Install mongo support.
-#   pip:
-#     name: pymongo
-#     executable: pip3
-#   become: yes

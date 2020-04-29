@@ -1,57 +1,30 @@
 ---
-- name: Clone checkbox.io repo
+- name: Clone checkbox.io repo on blue
   git:
     repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
-    dest: /root/checkbox.io-micro-preview
-    version: "{{ branch }}"
+    dest: /home/vagrant/checkbox.io-micro-preview
+    version: "{{ blue }}"
+  when: inventory_hostname == "192.168.44.25"
   become: yes
 
-# - name: Start mongodb service
-#   systemd:
-#     state: started
-#     name: mongodb
-#     enabled: yes
-#   become: yes
+- name: Clone checkbox.io repo on green
+  git:
+    repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
+    dest: /home/vagrant/checkbox.io-micro-preview
+    version: "{{ green }}"
+  when: inventory_hostname == "192.168.44.30"
+  become: yes
 
 - name: Install checkbox.io-micro-preview
   npm:
-    path: /root/checkbox.io-micro-preview
+    path: /home/vagrant/checkbox.io-micro-preview
   become: yes
 
-# - name: Update permissions for checkbox.io app
-#   file:
-#     path: /root/
-#     state: directory
-#     recurse: yes
-#     mode: u=rwX,g=rX,o=rX
-
-# - name: Add nginx configuration file
-#   become: yes
-#   template: src=default
-#             dest=/etc/nginx/sites-available/default
-
-# - name: Restart nginx service
-#   systemd:
-#     state: restarted
-#     name: nginx
-#     enabled: yes
-#   become: yes
+- name: Delete all  PM2 process
+  command: pm2 delete all
+  ignore_errors: True
 
 - name: Start checkbox.io as PM2 process
   command: pm2 start index.js
   args:
-    chdir: /root/checkbox.io-micro-preview
-  become: yes
-
-# - name: Wait for 1 min
-#   pause:
-#     minutes: 1
-
-# - name: Delete all PM2 processes
-#   command: pm2 delete all
-
-# - name: Start checkbox.io as PM2 process
-#   command: pm2 start server.js
-#   args:
-#     chdir: /root/checkbox.io/server-side/site
-#   become: yes
+    chdir: /home/vagrant/checkbox.io-micro-preview

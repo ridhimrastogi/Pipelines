@@ -20,7 +20,10 @@ os_environment:
     #   value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}"
     # - key:  MONITOR_IP
     #   value: "{{ (lookup('file', '../../serverInfos.json') | from_json).monitor.ip_address }}"
-    - key:  HEARTBEAT_IP
-      value: "{{ (lookup('file', '../../serverInfos.json') | from_json).heartbeat.ip_address }}"
+    # - key:  HEARTBEAT_IP
+    #   value: "{{ (lookup('file', '../../serverInfos.json') | from_json).heartbeat.ip_address }}"
 
 jenkinssrv_IP: "192.168.33.20"
+proxy_IP: "192.168.44.35"
+blue_IP: "192.168.44.25"
+green_IP: "192.168.44.30"

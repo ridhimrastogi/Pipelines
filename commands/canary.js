@@ -28,73 +28,20 @@ exports.handler = async argv => {
 
 async function run(blue, green) {
 
-    let promises = [];
-
-    let requiredServers =[{serverName: 'heartbeat', slug: '512mb' },{serverName: 'blue', slug: '512mb' },{serverName: 'green', slug: '512mb' }];
-    let serverInfos = {};
-
-    console.log(chalk.blueBright('Provisioning required servers...'));
-    requiredServers.forEach(server => {
-        console.log(chalk.yellow('Provisioning server ' + server.serverName));
-        promises.push(provision.createDroplet(server.serverName, server.slug));
-    });
+    // console.log(chalk.blueBright('Provisioning proxy server...'));
+    // let result = child.spawnSync(`bakerx`, `run proxy queues --ip 192.168.44.35 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
 
-    await Promise.all(promises).then(function (data) {
-        for (let index = 0; index < requiredServers.length; index++) {
-            let dropletInfo = data[index];
-            serverInfos[dropletInfo.name] = {id: dropletInfo.id, ip_address: dropletInfo.ip_address, name: dropletInfo.name, private_key: "csc_519_rsa_private", user: "root"};
-            //console.log(`ID: ${dropletInfo.id} ServerName: ${dropletInfo.name} IP_Address: ${dropletInfo.ip_address}`);
-        }
-        });
+    // console.log(chalk.blueBright('Provisioning blue server...'));
+    // result = child.spawnSync(`bakerx`, `run blue queues --ip 192.168.44.25 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    await updateInventory(serverInfos, blue, green);
-    try {
-        //push end point url for monitoring server
-        Object.values(serverInfos).forEach(server => {                 
-           let end_point = `http://${server.ip_address}`;
-            switch (server.name) {
-                case 'blue':
-                case 'green':
-                    end_point = `http://${server.ip_address}:3000/preview`
-                    break;
-                default:
-                    break;
-            }
+    // console.log(chalk.blueBright('Provisioning green server...'));
+    // result = child.spawnSync(`bakerx`, `run green queues --ip 192.168.44.30 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-            server.end_point_url = end_point;
-        });
-
-
-        fs.writeFileSync("cm/canary-analysis/serverInfos.json", JSON.stringify(serverInfos))
-      } catch (err) {
-        console.error(err)
-      }
-
-    await new Promise(r => setTimeout(r, 50000)); //give servers time to boot
-
-    configureServers();  //configure the servers
-}
-
-async function updateInventory(serverInfos, blue, green){
-    let inventory_stack = [];
-    let branch = '';
-    //make each server own group
-    Object.values(serverInfos).forEach(server => {
-        branch = '';
-        if(server.name == 'blue')
-            branch = blue
-        else if(server.name == 'green')
-            branch = green
-        inventory_stack.push(`[${server.name}]\n${server.ip_address} ansible_ssh_private_key_file=~/.ssh/${server.private_key}    ansible_user=${server.user}\n[${server.name}:vars]\nansible_ssh_common_args='-o StrictHostKeyChecking=no'\nansible_python_interpreter=python3\nbranch=${branch}`);
-    });
-
-    inventory_txt = inventory_stack.join("\n") + '\n\n\n';
-
-    let inventory_path = path.join(__dirname, "..", "cm", "canary-analysis", "canary-inventory.ini");
-    fs.writeFileSync(inventory_path, inventory_txt, function(err) {
-      if(err) throw err;
-    });
+   configureServers(blue,green);  //configure the servers
 }
 
 function configureServers(blue, green){

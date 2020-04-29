@@ -1,3 +1,0 @@
----
-- name: Push monitor agent to clients
-  shell: nodejs Monitor/servers/index.js push
