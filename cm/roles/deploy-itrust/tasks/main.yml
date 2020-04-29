@@ -1,13 +1,27 @@
----
-    - name: Copy the war file to tomcat
-      copy:
-        src: iTrust2.war
-        dest: /opt/tomcat/webapps/iTrust2.war
-      become: yes
+--- 
+- name: Copy the war file to tomcat
+  copy:
+    src: iTrust2.war
+    dest: /opt/tomcat/webapps/iTrust2.war
+  become: yes
 
-    - name: Reload tomcat service
-      systemd:
-          state: restarted
-          name: tomcat
-      become: yes
+- name: Reload tomcat service
+  systemd:
+      state: restarted
+      name: tomcat
+  become: yes
+
+- name: Ensure iTrust2 db exits
+  mysql_db:
+    name:
+      - iTrust2      
+    state: present
+
+- name: Copy iTrust back data file
+  copy:
+    src: iTrust2_backup.sql
+    dest: iTrust2_backup.sql
+
+- name: Import iTrust backup data
+  shell: mysql -u root iTrust2 < iTrust2_backup.sql 
 
