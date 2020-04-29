@@ -28,18 +28,18 @@ exports.handler = async argv => {
 
 async function run(blue, green) {
 
-    // console.log(chalk.blueBright('Provisioning proxy server...'));
-    // let result = child.spawnSync(`bakerx`, `run proxy queues --ip 192.168.44.35 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    console.log(chalk.blueBright('Provisioning proxy server...'));
+    let result = child.spawnSync(`bakerx`, `run proxy queues --ip 192.168.44.35 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
 
-    // console.log(chalk.blueBright('Provisioning blue server...'));
-    // result = child.spawnSync(`bakerx`, `run blue queues --ip 192.168.44.25 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    console.log(chalk.blueBright('Provisioning blue server...'));
+    result = child.spawnSync(`bakerx`, `run blue queues --ip 192.168.44.25 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    // console.log(chalk.blueBright('Provisioning green server...'));
-    // result = child.spawnSync(`bakerx`, `run green queues --ip 192.168.44.30 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    console.log(chalk.blueBright('Provisioning green server...'));
+    result = child.spawnSync(`bakerx`, `run green queues --ip 192.168.44.30 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
    configureServers(blue,green);  //configure the servers
 }
