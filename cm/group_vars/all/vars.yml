@@ -8,6 +8,8 @@ os_environment:
       value : mongodb_admin_user
     - key: MONGO_PASSWORD
       value : "{{ default_user_pwd }}"
+    - key: MYSQL_PWD
+      value : "{{ mysql_pwd }}"
     - key: MONGO_IP
       value : "localhost"
     - key:  GH_USER
