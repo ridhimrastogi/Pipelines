@@ -63,10 +63,10 @@
 #   npm:
 #     path: heartbeat/agent
 
-- name: Install dashboard packages
+- name: Install server packages
   command: npm install --no-bin-links
   args:
-    chdir: /bakerx/cm/canary-analysis/proxy/dashboard
+    chdir: /bakerx/cm/canary-analysis/proxy/servers
 
 # - name: Push agents to remote servers
 #   shell: nodejs heartbeat/servers/index.js push
@@ -80,12 +80,12 @@
   # changed_when: false
 
 - name: "Start proxy server"
-  command: forever start /bakerx/cm/canary-analysis/proxy/index.js serve
-  when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/index') == -1"
+  command: forever start /bakerx/cm/canary-analysis/proxy/servers/index.js serve
+  when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/servers/index') == -1"
 
   # - name: "Start proxy server"
   # command: forever start index.js serve
-  # when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/dashboard/bin/www') == -1"
+  # when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/server/bin/www') == -1"
 
 
 - name: Clone checkbox.io repo

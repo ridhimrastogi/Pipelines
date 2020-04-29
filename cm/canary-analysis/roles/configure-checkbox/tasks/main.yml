@@ -13,11 +13,11 @@
   with_items: "{{ os_environment }}"
   become: yes
 
-- name: Installing required packages.
-  apt:
-    pkg: "{{packages}}"
-    state: present
-  become: yes
+# - name: Installing required packages.
+#   apt:
+#     pkg: "{{packages}}"
+#     state: present
+#   become: yes
 
 - name: apt update.
   apt:
@@ -29,3 +29,14 @@
     name: pm2
     global: yes
   become: yes
+
+- name: Install Forever.
+  npm:
+    name: forever
+    global: yes
+  become: yes
+
+- name: Install agent packages
+  command: npm install --no-bin-links
+  args:
+    chdir: /bakerx/cm/canary-analysis/proxy/agent
