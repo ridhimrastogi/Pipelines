@@ -40,3 +40,4 @@
   command: npm install --no-bin-links
   args:
     chdir: /bakerx/cm/canary-analysis/proxy/agent
+  become: yes  
