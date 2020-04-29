@@ -72,11 +72,3 @@
     name: PyMySQL
     executable: pip3
   become: yes
-
-- name: Copy iTrust back data file
-  copy:
-    src: iTrust_backup.sql
-    dest: iTrust_backup.sql
-
-- name: Import iTrust backup data
-  shell: mysql -u root iTrust2 < iTrust_backup.sql 
