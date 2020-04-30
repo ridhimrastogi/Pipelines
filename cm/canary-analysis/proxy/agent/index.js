@@ -11,7 +11,7 @@ class Agent
     {
        // console.log( os.totalmem(), os.freemem() );
        let avgMem = 0;
-     await si.mem().then(data => {
+       await si.mem().then(data => {
          avgMem = (data.used / data.total) * 100;
          avgMem = Math.round(avgMem * 100 ) / 100; //round to nearest 100th
         });
