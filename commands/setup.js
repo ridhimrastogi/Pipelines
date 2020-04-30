@@ -73,21 +73,21 @@ async function run(privateKey, gh_user, gh_pass, gm_user, gm_pass) {
     result = scpSync (identifyFile, 'vagrant@192.168.33.10:/home/vagrant/.ssh/baker_rsa');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    // // Run the setup script
-    // console.log(chalk.blueBright('Running init script...'));
-    // let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass);
-    // console.log(server_init);
-    // result = sshSync(server_init, 'vagrant@192.168.33.10');
-    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // Run the setup script
+    console.log(chalk.blueBright('Running init script...'));
+    let server_init = '/bakerx/cm/server-init.sh ' + escapeShell(gh_user) + ' ' + escapeShell(gh_pass) + ' ' + escapeShell(gm_user) + ' ' + escapeShell(gm_pass);
+    console.log(server_init);
+    result = sshSync(server_init, 'vagrant@192.168.33.10');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    // // the paths should be from root of cm directory
-    // // Transforming path of the files in host to the path in VM's shared folder
-    // let filePath = '/bakerx/' + 'cm/playbook.yml';
-    // let inventoryPath = '/bakerx/' + 'cm/jenkins-inventory.ini';
+    // the paths should be from root of cm directory
+    // Transforming path of the files in host to the path in VM's shared folder
+    let filePath = '/bakerx/' + 'cm/playbook.yml';
+    let inventoryPath = '/bakerx/' + 'cm/jenkins-inventory.ini';
 
-    // console.log(chalk.blueBright('Running ansible playbook script...'));
-    // result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
-    // if( result.error ) { process.exit( result.status ); }
+    console.log(chalk.blueBright('Running ansible playbook script...'));
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.10');
+    if( result.error ) { process.exit( result.status ); }
 
 }
 
