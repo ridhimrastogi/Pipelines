@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('monitor:server');
 var http = require('http');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +21,8 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+start_metric_log();
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -87,4 +90,11 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+}
+
+
+function start_metric_log()
+{
+  //initialize metric file
+  fs.writeFileSync("Heartbeat/servers/metrics.csv", ['ServerName', 'CPU%','Mem%','Latency(mS)','DateTime'].join(','));
 }

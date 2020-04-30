@@ -73,8 +73,9 @@ function start(app)
 			{
 				let payload = JSON.parse(message);
 				server.memoryLoad = payload.memoryLoad;
-				server.cpu = payload.cpu;
+				server.cpu = payload.cpu;				
 				updateHealth(server);
+				record_metrics(server);
 			}
 		}
 	});
@@ -118,12 +119,11 @@ function updateHealth(server)
 	let pts_cpu = 1 - (server.cpu / 100);
 	let pts_statusCode = server.statusCode == 200 ? 1 : 0;
 	let latency_err = Math.abs(server.latency - 15) / 15;
-	let pts_latency = server.latency <= 15 ? 1 : latency_err > 0 && latency_err <= 1 ? 1 - latency_err : 0;
+	let pts_latency = server.latency <= 15 ? 1 : latency_err > 0 && latency_err <= 1 ? 1 - latency_err : 0;	
 
-	score = server.statusCode == 200 ? pts_memoryLoad + pts_cpu + pts_statusCode + pts_latency : 0; 
-	
+	score = server.statusCode == 200 ? pts_memoryLoad + pts_cpu + pts_statusCode + pts_latency : 0; 	
 
-	server.status = score2color(score/4);
+	server.status = score2color(score/4);	
 
 	console.log(`${server.name} ${score}`);
 
@@ -133,6 +133,12 @@ function updateHealth(server)
 	{
 		server.scoreTrend.shift();
 	}
+}
+
+function record_metrics(server)
+{
+	//header: 'ServerName', 'CPU%','Mem%','Latency(mS)','DateTime'
+	return fs.appendFileSync("Heartbeat/servers/metrics.csv", "\r\n" + [server.name, server.cpu, server.memoryLoad, server.latency, Date.now()].join(','));
 }
 
 function score2color(score)

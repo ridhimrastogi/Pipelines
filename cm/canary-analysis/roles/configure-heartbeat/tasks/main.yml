@@ -20,6 +20,15 @@
     owner: vagrant
     group: vagrant
 
+- name: Change owner/group of Heartbeat
+  become: yes
+  file:
+    path: Heartbeat
+    recurse: yes
+    mode: 0700
+    owner: vagrant
+    group: vagrant
+
 - name: Copy private key js_rsa
   become: yes
   copy:
