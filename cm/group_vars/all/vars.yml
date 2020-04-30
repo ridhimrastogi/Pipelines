@@ -21,6 +21,6 @@ os_environment:
     - key:  GM_PWD
       value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}" 
     - key:  MONITOR_IP
-      value: "{{ (lookup('file', '../../serverInfos.json') | from_json).monitor.ip_address }}"   
+      value: "{{ (lookup('file', '../../serverInfos_DigitalOcean.json') | from_json).monitor.ip_address }}"   
 
 jenkinssrv_IP: "192.168.33.20"

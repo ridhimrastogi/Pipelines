@@ -6,18 +6,17 @@
 - hosts: proxy
   gather_facts: yes
   roles:
-    #- server-setup
-    - configure-heartbeat
-    #- configure-heartbeat-client
+    - server-setup
+    - configure-heartbeat    
 
 - hosts: blue:green
-  gather_facts: yes
+  gather_facts: yes  
   roles:
     - configure-checkbox
-    #- configure-heartbeat-client
-    - deploy-checkbox
+    - configure-heartbeat-client
+    # - deploy-checkbox
 
-# - hosts: proxy
-#   gather_facts: yes
-#   roles:
-#     - heartbeat-push-agent
+- hosts: proxy
+  gather_facts: yes
+  roles:
+    - heartbeat-push-agent

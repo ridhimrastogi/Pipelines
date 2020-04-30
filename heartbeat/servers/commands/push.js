@@ -36,31 +36,34 @@ async function run() {
 
     // let servers = ['alpine-01', 'alpine-02', 'alpine-03'];
 
-    let servers = JSON.parse(fs.readFileSync("heartbeat/servers/serverInfos.json", 'utf8')); 
+    let servers = JSON.parse(fs.readFileSync("Heartbeat/servers/serverInfos_VBox.json", 'utf8')); 
 
     Object.values(servers).forEach(server => 
     {
-        let port=22;
+        let port = 22;
+        console.log(`Port: ${port}`);
         if(server.name == 'blue' || server.name == 'green'){
 
                 console.log(chalk.keyword('pink')(`Updated agent on server: ${server.name}`));
                 // agent/index.js
-                result = scpSync (port, agentJS, `root@${server.ip_address}:/root/agent.js`);
+                console.log(chalk.yellow("Sending agent file"));
+                result = scpSync (port, agentJS, `vagrant@${server.ip_address}:/home/vagrant/agent.js`);
                 if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
                 // agent/package.json
-                result = scpSync (port, package, `root@${server.ip_address}:/root/package.json`);
+                console.log(chalk.yellow("Sending package.json file"));
+                result = scpSync (port, package, `vagrant@${server.ip_address}:/home/vagrant/package.json`);
                 if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
                 if( process.platform=='win32')
                 {
-                    result = sshSync(`"if forever list | grep -q agent.js; then forever stop agent.js; fi"`, `root@${server.ip_address}`, port);
-                    result = sshSync(`"npm install && forever start agent.js ${server.name}"`, `root@${server.ip_address}`, port);
+                    result = sshSync(`"if forever list | grep -q agent.js; then forever stop agent.js; fi"`, `vagrant@${server.ip_address}`, port);
+                    result = sshSync(`"npm install && forever start agent.js ${server.name}"`, `vagrant@${server.ip_address}`, port);
                 }
                 else
                 {
-                    result = sshSync(`'if forever list | grep -q agent.js; then forever stop agent.js; fi'`, `root@${server.ip_address}`, port);
-                    result = sshSync(`'npm install && forever start agent.js ${server.name}'`, `root@${server.ip_address}`, port);
+                    result = sshSync(`'if forever list | grep -q agent.js; then forever stop agent.js; fi'`, `vagrant@${server.ip_address}`, port);
+                    result = sshSync(`'npm install && forever start agent.js ${server.name}'`, `vagrant@${server.ip_address}`, port);
                 }
                 if( result.error ) { console.log(result.error); process.exit( result.status ); }
 

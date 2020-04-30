@@ -27,8 +27,8 @@
 - name: Copy ServerInfo json
   become: yes
   copy:
-    src: ../../serverInfos.json
-    dest: Monitor/servers/serverInfos.json
+    src: ../../serverInfos_DigitalOcean.json
+    dest: Monitor/servers/serverInfos_DigitalOcean.json
 
 - name: Copy Redis Config
   become: yes

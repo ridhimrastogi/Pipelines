@@ -8,16 +8,18 @@ const Stopwatch = require('statman-stopwatch');
 /// Servers data being monitored.
 var servers = [];
 
-let serverInfos = JSON.parse(fs.readFileSync("heartbeat/servers/serverInfos.json", 'utf8')); 
+let serverInfos = JSON.parse(fs.readFileSync("Heartbeat/servers/serverInfos_VBox.json", 'utf8')); 
 
 Object.values(serverInfos).forEach(server => 
 	{
-		servers.push({name: server.name, 
-			url:`http://${server.ip_address}/`, 
-			status: "#cccccc",  
-			scoreTrend : [0],
-			end_point_url: server.end_point_url
-		});
+		if(server.name == 'blue' || server.name == 'green'){
+			servers.push({name: server.name, 
+				url:`http://${server.ip_address}/`, 
+				status: "#cccccc",  
+				scoreTrend : [0],
+				end_point_url: server.end_point_url
+			});
+		}
 	});
 
 
@@ -91,7 +93,7 @@ function start(app)
 
 				// Make request to server we are monitoring.
 				const stopwatch = new Stopwatch(true);
-				got(server.end_point_url, {timeout: 5000, throwHttpErrors: false}).then(function(res)
+				got(server.url, {timeout: 5000, throwHttpErrors: false}).then(function(res)
 				{
 					// TASK 2
 					captureServer.statusCode = res.statusCode;

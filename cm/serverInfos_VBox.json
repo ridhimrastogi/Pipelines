@@ -1,0 +1,1 @@
+{"proxy":{"id":0,"ip_address":"192.168.44.35","name":"proxy","private_key":"js_rsa","user":"vagrant","ssh_port":2009},"blue":{"id":0,"ip_address":"192.168.44.25","name":"blue","private_key":"js_rsa","user":"vagrant","ssh_port":2010},"green":{"id":0,"ip_address":"192.168.44.30","name":"green","private_key":"js_rsa","user":"vagrant","ssh_port":2011}}

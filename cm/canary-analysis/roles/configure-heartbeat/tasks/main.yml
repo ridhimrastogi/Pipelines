@@ -1,52 +1,53 @@
 ---
-# - name: Installing required packages.
-#   apt:
-#     pkg: "{{packages}}"
-#     state: present
-#   become: yes
+- name: Installing required packages.
+  apt:
+    pkg: "{{packages}}"
+    state: present
+  become: yes
+  
+- name: Create Heartbeat a directory if it does not exist
+  file:
+    path: Heartbeat
+    state: directory
+    mode: '0755'
 
-# - name: Create heartbeat a directory if it does not exist
-#   file:
-#     path: heartbeat
-#     state: directory
-#     mode: '0755'
+- name: Copy Heartbeat zip
+  become: yes
+  unarchive: 
+    src: Heartbeat.zip
+    dest: Heartbeat
+    mode: 0777
+    owner: vagrant
+    group: vagrant
 
-# - name: Copy heartbeat zip
-#   become: yes
-#   copy:
-#     src: heartbeat.zip
-#     dest: /root/heartbeat.zip
-#     mode: 0777
+- name: Copy private key js_rsa
+  become: yes
+  copy:
+    src: ~/.ssh/js_rsa
+    dest: /home/vagrant/.ssh/js_rsa
+    mode: 0700
+    owner: vagrant
+    group: vagrant
+    
+- name: Copy ServerInfo json
+  become: yes
+  copy:
+    src: ../../../serverInfos_VBox.json
+    dest: Heartbeat/servers/serverInfos_VBox.json
 
-# - name: Unzips folder
-#   command: unzip /root/heartbeat.zip 
+- name: Copy Redis Config
+  become: yes
+  copy:
+    src: redis.conf
+    dest: /etc/redis/redis.conf
 
-# - name: Copy private key
-#   become: yes
-#   copy:
-#     src: /home/vagrant/.ssh/csc_519_rsa_private
-#     dest: /root/.ssh/csc_519_rsa_private
-#     mode: 0700
-
-# - name: Copy ServerInfo json
-#   become: yes
-#   copy:
-#     src: ../../serverInfos.json
-#     dest: heartbeat/servers/serverInfos.json
-
-# - name: Copy Redis Config
-#   become: yes
-#   copy:
-#     src: redis.conf
-#     dest: /etc/redis/redis.conf
-
-# - name: Restart Redis server
-#   systemd:
-#     state: restarted
-#     daemon_reload: yes
-#     name: redis
-#     enabled: yes
-#   become: yes
+- name: Restart Redis server
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: redis
+    enabled: yes
+  become: yes
 
 - name: Install Forever.
   npm:
@@ -59,37 +60,43 @@
   args:
     chdir: /bakerx/cm/canary-analysis/proxy
 
-# - name: Install agent packages
-#   npm:
-#     path: heartbeat/agent
-
 - name: Install server packages
-  command: npm install --no-bin-links
-  args:
-    chdir: /bakerx/cm/canary-analysis/proxy/servers
+  npm:
+    path: Heartbeat/servers
+  become: yes
+
+- name: Install agent packages
+  npm:
+    path: Heartbeat/agent
+  become: yes
+
+- name: Install dashboard packages
+  npm:
+    path: Heartbeat/dashboard
+  become: yes
 
 # - name: Push agents to remote servers
-#   shell: nodejs heartbeat/servers/index.js push
+#   shell: nodejs Heartbeat/servers/index.js push
+
+- name: "Start Monitor server"
+  command: forever start Heartbeat//dashboard/bin/www
 
 # - name: "Install forever (to run Node.js app)."
 #   npm: name=forever global=yes state=present
 
-- name: "Check list of Node.js apps running."
-  command: forever list
-  register: forever_list
-  # changed_when: false
+# - name: "Check list of Node.js apps running."
+#   command: forever list
+#   register: forever_list
 
-- name: "Start proxy server"
-  command: forever start /bakerx/cm/canary-analysis/proxy/servers/index.js serve
-  when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/servers/index') == -1"
+# - name: "Start proxy server"
+#   command: forever start /bakerx/cm/canary-analysis/proxy/servers/index.js serve
+#   when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/servers/index') == -1"
 
-  # - name: "Start proxy server"
-  # command: forever start index.js serve
-  # when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/server/bin/www') == -1"
+#   - name: "Start proxy server"
+#   command: forever start index.js serve
 
-
-- name: Clone checkbox.io repo
-  git:
-    repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
-    dest: /home/vagrant/checkbox.io-micro-preview
-  become: yes
+# - name: Clone checkbox.io repo
+#   git:
+#     repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
+#     dest: /home/vagrant/checkbox.io-micro-preview
+#   become: yes

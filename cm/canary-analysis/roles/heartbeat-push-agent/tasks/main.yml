@@ -1,3 +1,3 @@
 ---
 - name: Push monitor agent to clients
-  shell: nodejs heartbeat/servers/index.js push
+  shell: nodejs Heartbeat/servers/index.js push

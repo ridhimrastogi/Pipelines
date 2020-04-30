@@ -7,6 +7,7 @@ const fs = require('fs');
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
 const provision = require('../lib/provision');
+const VBox = require('../lib/VBoxManage');
 
 exports.command = 'canary <blue> <green>';
 exports.desc = 'Create an automated analysis that generates a canary score';
@@ -28,24 +29,32 @@ exports.handler = async argv => {
 
 async function run(blue, green) {
 
-    console.log(chalk.blueBright('Provisioning proxy server...'));
-    let result = child.spawnSync(`bakerx`, `run proxy queues --ip 192.168.44.35 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // console.log(chalk.blueBright('Provisioning proxy server...'));
+    // let result = child.spawnSync(`bakerx`, `run proxy queues --ip 192.168.44.35 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
+    // console.log(chalk.blueBright('Provisioning blue server...'));
+    // result = child.spawnSync(`bakerx`, `run blue queues --ip 192.168.44.25 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Provisioning blue server...'));
-    result = child.spawnSync(`bakerx`, `run blue queues --ip 192.168.44.25 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // console.log(chalk.blueBright('Provisioning green server...'));
+    // result = child.spawnSync(`bakerx`, `run green queues --ip 192.168.44.30 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Provisioning green server...'));
-    result = child.spawnSync(`bakerx`, `run green queues --ip 192.168.44.30 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // let identifyFile = path.join(os.homedir(), '.bakerx', 'insecure_private_key');
+    // result = scpSync (identifyFile, 'vagrant@192.168.44.35:/home/vagrant/.ssh/js_rsa');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    // let identifyFile = path.join(__dirname, '..', 'Heartbeat', 'agent', 'index.js');
+    // result = scpSync (identifyFile, 'vagrant@192.168.44.25:/home/vagrant/agent.js');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
    configureServers(blue,green);  //configure the servers
+   
 }
 
 function configureServers(blue, green){
-    let filePath =  '/bakerx/' + 'cm/canary-analysis/playbook.yml';
+    let filePath =  '/bakerx/cm/canary-analysis/playbook.yml';
     let inventory_path = '/bakerx/cm/canary-analysis/canary-inventory.ini';
     console.log(chalk.blueBright(`Congifuring the servers`));
     let result = sshSync(`/bakerx/cm/canary-analysis/configure.sh ${filePath} ${inventory_path} ${blue} ${green}`, 'vagrant@192.168.33.10');
@@ -53,5 +62,4 @@ function configureServers(blue, green){
         process.exit(result.status);
     }
 }
-
 

@@ -3,7 +3,7 @@ const os   = require('os');
 
 const child = require('child_process');
 
-let identifyFile = path.join(os.homedir(), '.ssh', 'csc_519_rsa_private');
+let identifyFile = path.join(os.homedir(), '.ssh', 'js_rsa');
 
 module.exports = function(cmd, host, port) {
     let sshArgs = [];

@@ -10,18 +10,16 @@ os_environment:
       value : "{{ default_user_pwd }}"
     - key: MONGO_IP
       value : "localhost"
-    # - key:  GH_USER
-    #   value: "{{ lookup('env','GH_USER')  }}"
-    # - key:  GH_PWD
-    #   value: "{{ lookup('env','GH_PWD')   }}"
-    # - key:  GM_USER
-    #   value: "{{ lookup('env','GM_USER') if ( lookup('env','GM_USER') ) else 'halfheartedtrebel' }}"
-    # - key:  GM_PWD
-    #   value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}"
-    # - key:  MONITOR_IP
-    #   value: "{{ (lookup('file', '../../serverInfos.json') | from_json).monitor.ip_address }}"
-    # - key:  HEARTBEAT_IP
-    #   value: "{{ (lookup('file', '../../serverInfos.json') | from_json).heartbeat.ip_address }}"
+    - key:  GH_USER
+      value: "{{ lookup('env','GH_USER')  }}"
+    - key:  GH_PWD
+      value: "{{ lookup('env','GH_PWD')   }}"
+    - key:  GM_USER
+      value: "{{ lookup('env','GM_USER') if ( lookup('env','GM_USER') ) else 'halfheartedtrebel' }}"
+    - key:  GM_PWD
+      value: "{{ lookup('env','GM_PWD') if ( lookup('env','GM_PWD') ) else  gm_pass }}"    
+    - key:  HEARTBEAT_IP
+      value: "{{ (lookup('file', '../../../serverInfos_VBox.json') | from_json).proxy.ip_address }}"
 
 jenkinssrv_IP: "192.168.33.20"
 proxy_IP: "192.168.44.35"

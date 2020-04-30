@@ -22,10 +22,24 @@
   become: yes
 
 - name: Update and upgrade apt packages.
-  apt:
-    upgrade: yes
-    update_cache: yes
+  register: result
+  until: result.failed == false
+  delay: 10
+  retries: 15
   become: yes
+  apt:
+    # upgrade: yes
+    update_cache: yes
+
+# - name: Update and upgrade apt packages.
+#   become: yes
+#   apt:
+#     # upgrade: yes
+#     update_cache: yes
+#   register: result  
+
+# - debug: 
+#     msg: "{{result}}"
 
 - name: add nodejs key.
   apt_key:
@@ -59,11 +73,15 @@
     # ************************************************************************************************************************
 
 - name: Installing required packages.
+  register: result
+  until: result.failed == false
+  delay: 10
+  retries: 15
+  become: yes
   apt:
     pkg: "{{packages}}"
     state: present
     update_cache: yes
-  become: yes
 
 - name: apt update.
   apt:
