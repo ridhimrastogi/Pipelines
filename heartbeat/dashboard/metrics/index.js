@@ -14,7 +14,7 @@ Object.values(serverInfos).forEach(server =>
 	{
 		if(server.name == 'blue' || server.name == 'green'){
 			servers.push({name: server.name, 
-				url:`http://${server.ip_address}/`, 
+				url:`http://${server.ip_address}:3000/`, 
 				status: "#cccccc",  
 				scoreTrend : [0],
 				end_point_url: server.end_point_url
