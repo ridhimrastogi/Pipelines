@@ -6,6 +6,8 @@ const got = require('got');
 const http = require('http');
 const httpProxy = require('http-proxy');
 
+var monitor = require("../../dashboard/metrics/index.js");
+
 exports.command = 'serve';
 exports.desc = 'Run traffic proxy.';
 exports.builder = yargs => {};
@@ -29,7 +31,7 @@ class Production
 	constructor()
     {
 		this.TARGET = BLUE;
-		this.timer = setInterval(this.generateTraffic.bind(this),1000);
+		this.timer = setInterval(this.generateTraffic.bind(this),1);
 		this.dataString = fs.readFileSync('/home/vagrant/checkbox.io-micro-preview/test/resources/survey.json', 'utf8');
     }
 
@@ -60,21 +62,29 @@ class Production
 		setTimeout(() => {
 			clearInterval(this.timer);
 			this.generateReport();
-		},50000);
+		},120000);
+
    }
 
    generateReport(){
-	   console.log("CANARY PASSED/FAILED");
    }
 
    async generateTraffic()
    {
+	   let index = -1;
+	   if(this.TARGET == BLUE){
+		   index = 0;
+	   }
+	   else {
+		   index = 1;
+	   }
 		try
 		{
-			const response = await got.post("http://192.168.44.35:3080/preview", { headers: {'Content-Type': 'application/json'}, body: this.dataString, timeout: 10000, throwHttpErrors: false});
-			let status = response.statusCode == 200 ? chalk.green(response.statusCode) : chalk.red(response.statusCode);
-			// if(response.statusCode != 200)
-			// 	this.failover();
+			console.log(monitor.servers.server);
+			let response = await got.post("http://192.168.44.35:3080/preview", { headers: {'Content-Type': 'application/json'}, body: this.dataString, timeout: 10000, throwHttpErrors: false})
+			let status = response.statusCode;
+			let setter = {responseCode: status, idx: index}
+			monitor.servers.serversInfo = setter;
 			console.log( chalk`{grey Health check on ${this.TARGET}}: ${status}`);
 		}
 		catch (error) {
@@ -87,9 +97,10 @@ class Production
 async function run() {
 
     console.log(chalk.keyword('pink')('Starting proxy on localhost:3080'));
-
     let prod = new Production();
 	prod.proxy();
 	//generate traffic on blue canary for 50 seconds
-	setTimeout(() => { prod.canaryAnalysis(); },50000);
+	setTimeout(() => { prod.canaryAnalysis(); },120000);
 }
+
+//module.exports = new Production();
