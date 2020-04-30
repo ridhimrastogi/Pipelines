@@ -53,23 +53,61 @@ class Production
    failover()
    {
 	  this.TARGET = GREEN;
-	  console.log( chalk`{green ${this.TARGET}}`);
    }
 
    canaryAnalysis(){
-		console.log("Switching canaries\n");
+		console.log("Switching canaries");
+		console.log(chalk`{green Generating traffic for green canary}`);
 		this.failover();
 		setTimeout(() => {
 			clearInterval(this.timer);
 			this.generateReport();
-		},120000);
+		},30000);
 
    }
 
    generateReport(){
+	   let metrics = fs.readFileSync('/bakerx/cm/canary-analysis/proxy/servers/metrics.csv', 'utf8');
+	   let row = metrics.split("\n");
+	   let avgBlueCpuLoad = 0;
+	   let avgGreenCpuLoad = 0;
+	   let blueCount = 0;
+	   let greenCount = 0;
+	   let lastBlueResponseCode = "";
+	   let lastGreenResponseCode = "";
+	   row.forEach(x => {
+			let cols =  x.split(" ");
+			if(cols[0] == 'blue'){
+					avgBlueCpuLoad = avgBlueCpuLoad + parseInt(cols[1]);
+					blueCount++;
+					lastBlueResponseCode = cols[3];
+				}
+				if(cols[0] == 'green'){
+					avgGreenCpuLoad = avgGreenCpuLoad + parseInt(cols[1]);
+					greenCount++;
+					lastGreenResponseCode = cols[3];
+				}
+	   });
+
+	   avgBlueCpuLoad = Math.round(avgBlueCpuLoad/blueCount);
+	   avgGreenCpuLoad = Math.round(avgGreenCpuLoad/greenCount);
+	   console.log(chalk`{blueBright BLUE CANARY\t AVG_CPULOAD: ${avgBlueCpuLoad} LAST_RESPONSE_CODE: ${lastBlueResponseCode}}`);
+	   console.log(chalk`{green GREEN CANARY\t AVG_CPULOAD: ${avgGreenCpuLoad} LAST_RESPONSE_CODE: ${lastGreenResponseCode}}`);
+
+	   console.log("======================================================");
+	   if(lastGreenResponseCode == lastBlueResponseCode &&
+		(avgGreenCpuLoad > 0.8 * avgBlueCpuLoad && avgGreenCpuLoad < 1.2 * avgBlueCpuLoad))
+	   {
+			console.log(chalk`{green CANARY PASSED}`);
+	   }
+	   else{
+		console.log(chalk`{red CANARY FAILED}`);
+	   }
+	   console.log("======================================================");
+	   process.exit(1);
    }
 
-   async generateTraffic()
+   generateTraffic()
    {
 	   let index = -1;
 	   if(this.TARGET == BLUE){
@@ -80,12 +118,9 @@ class Production
 	   }
 		try
 		{
-			console.log(monitor.servers.server);
-			let response = await got.post("http://192.168.44.35:3080/preview", { headers: {'Content-Type': 'application/json'}, body: this.dataString, timeout: 10000, throwHttpErrors: false})
-			let status = response.statusCode;
-			let setter = {responseCode: status, idx: index}
-			monitor.servers.serversInfo = setter;
-			console.log( chalk`{grey Health check on ${this.TARGET}}: ${status}`);
+			got.post("http://192.168.44.35:3080/preview", { headers: {'Content-Type': 'application/json'}, body: this.dataString, timeout: 10000, throwHttpErrors: false}).then(function(res){
+				let status = res.statusCode;
+			});
 		}
 		catch (error) {
 			console.log(error);
@@ -96,11 +131,12 @@ class Production
 
 async function run() {
 
-    console.log(chalk.keyword('pink')('Starting proxy on localhost:3080'));
+    console.log(chalk.keyword('pink')('Starting proxy on 192.168.44.35:3080'));
     let prod = new Production();
 	prod.proxy();
-	//generate traffic on blue canary for 50 seconds
-	setTimeout(() => { prod.canaryAnalysis(); },120000);
+	console.log(chalk`{blueBright Generating traffic for blue canary}`);
+	//generate traffic on blue canary for 5 minutes
+	setTimeout(() => { prod.canaryAnalysis(); },30000);
 }
 
 //module.exports = new Production();
