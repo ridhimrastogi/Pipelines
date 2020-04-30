@@ -36,7 +36,7 @@ async function run() {
 
     // let servers = ['alpine-01', 'alpine-02', 'alpine-03'];
 
-    let servers = JSON.parse(fs.readFileSync("Monitor/servers_DigitalOcean.json", 'utf8')); 
+    let servers = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos_DigitalOcean.json", 'utf8')); 
 
     Object.values(servers).forEach(server => 
     {

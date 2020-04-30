@@ -8,7 +8,7 @@ const Stopwatch = require('statman-stopwatch');
 /// Servers data being monitored.
 var servers = [];
 
-let serverInfos = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos_DigtialOcean.json", 'utf8')); 
+let serverInfos = JSON.parse(fs.readFileSync("Monitor/servers/serverInfos_DigitalOcean.json", 'utf8')); 
 
 Object.values(serverInfos).forEach(server => 
 	{

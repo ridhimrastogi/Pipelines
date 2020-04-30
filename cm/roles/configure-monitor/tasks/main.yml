@@ -46,7 +46,7 @@
 
 - name: Install server packages
   npm:
-    path: Monitor/Servers
+    path: Monitor/servers
 
 - name: Install agent packages
   npm:
