@@ -6,7 +6,16 @@
 2. Run ```npm install```
 3. Run ```npm link```
 
-Below is the basic syntax for provisioning the servers:
+## Prerequisite
+
+**Environment variables on local machine**
+
+- NCSU_DOTOKEN - Digital ocean api token
+- VM_Pub_Key_FingerPrint - Fingerprint of the SSH key that is registered with your digital ocean account.
+
+## Commands
+
+1. Run the setup command.
 
 ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
 
@@ -14,11 +23,23 @@ Below is the basic syntax for provisioning the servers:
 #### - *Note: If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
 #### - *Note:  Single quote around passwords with special characters are expected*
 
-To build the iTrust database  use command: ```pipeline build iTrust```
+2. Provision the VM on Digital ocean
 
-To run mutation testing on iTrust test suite use command: ```pipeline useful-tests -c <iterations>```
+```pipeline prod up```
 
-To start build for checkbox.io use command: ```pipeline build checkbox.io```
+3. Deploy Checkbox application
+
+```pipeline deploy checkbox.io -i inventory.ini```
+
+4. Deploy iTrust application
+
+```pipeline deploy iTrust -i inventory.ini```
+
+#### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}/8080/iTrust2*
+
+5. Run canary analysis 
+
+```pipeline canary master broken```
 
 # MILESTONE 3 REPORT
 
