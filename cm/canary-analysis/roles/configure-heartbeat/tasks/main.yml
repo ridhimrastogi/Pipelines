@@ -32,13 +32,13 @@
     enabled: yes
   become: yes
 
-- name: Install global packages
+- name: Install dashboard packages
   command: npm install --no-bin-links
   args:
-    chdir: /bakerx/cm/canary-analysis/proxy
+    chdir: /bakerx/cm/canary-analysis/proxy/dashboard
   become: yes
 
-- name: Install global packages
+- name: Install server packages
   command: npm install --no-bin-links
   args:
     chdir: /bakerx/cm/canary-analysis/proxy/servers
