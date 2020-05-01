@@ -108,8 +108,7 @@ class Production
 	   console.log(chalk`{green GREEN_INSTANCE\t AVG_CPULOAD: ${avgGreenCpuLoad} LAST_RESPONSE_CODE: ${lastGreenResponseCode}} SCORE: ${greenCanaryScore}`);
 
 	   console.log("======================================================");
-	   if(lastGreenResponseCode == lastBlueResponseCode &&
-		(avgGreenCpuLoad > 0.8 * avgBlueCpuLoad && avgGreenCpuLoad < 1.2 * avgBlueCpuLoad))
+	   if(greenCanaryScore >= 2)
 	   {
 			console.log(chalk`{green CANARY PASSED}`);
 	   }
