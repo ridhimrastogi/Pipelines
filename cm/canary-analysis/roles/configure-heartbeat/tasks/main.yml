@@ -36,6 +36,13 @@
   command: npm install --no-bin-links
   args:
     chdir: /bakerx/cm/canary-analysis/proxy
+  become: yes
+
+- name: Install global packages
+  command: npm install --no-bin-links
+  args:
+    chdir: /bakerx/cm/canary-analysis/proxy/servers
+  become: yes
 
 - name: Clone checkbox.io repo
   git:
