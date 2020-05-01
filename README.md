@@ -23,19 +23,30 @@
 #### - *Note: If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
 #### - *Note:  Single quote around passwords with special characters are expected*
 
+This command creates the ansible and jenkins VM on your local machine.
+
 2. Provision the VM on Digital ocean 
 
     ```pipeline prod up```
+    
+This command creates the mointor, checkbox and iTrust servers on Digital Ocean. It also configures the monitor server.    
 
 3. Deploy Checkbox application
 
     ```pipeline deploy checkbox.io -i inventory.ini```
+    
+ This command setups the production environment for checkbox, deploys the appliction. It also starts the metric collection from checkbox.io server.
+ 
+ #### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the checkbox application still gets deployed without any errors.*
 
 4. Deploy iTrust application
 
     ```pipeline deploy iTrust -i inventory.ini```
 
+This command setups the production environment for iTrust, deploys the appliction. It also starts the metric collection from iTrust server.
+
 #### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}/8080/iTrust2*
+#### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the iTrust application still gets deployed without any errors.*
 
 5. Run canary analysis 
 
