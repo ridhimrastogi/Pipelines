@@ -101,7 +101,7 @@ class Production
 
 		//Compute green instance score
 		greenCanaryScore = lastBlueResponseCode == 200 ? 2: 0;
-		if(avgGreenCpuLoad < 80)
+		if(avgGreenCpuLoad > 0.8 * avgBlueCpuLoad && avgGreenCpuLoad < 1.2 * avgBlueCpuLoad)
 			greenCanaryScore++;
 
 	   console.log(chalk`{blueBright BLUE_INSTANCE\t AVG_CPULOAD: ${avgBlueCpuLoad} LAST_RESPONSE_CODE: ${lastBlueResponseCode}} SCORE: ${blueCanaryScore}`);
