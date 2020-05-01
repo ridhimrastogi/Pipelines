@@ -17,29 +17,29 @@
 
 1. Run the setup command.
 
-```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
+    ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
 
 #### - *Note: --gm-user and --gm-pass are optional fields. If not provided default values will be used*
 #### - *Note: If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
 #### - *Note:  Single quote around passwords with special characters are expected*
 
-2. Provision the VM on Digital ocean
+2. Provision the VM on Digital ocean 
 
-```pipeline prod up```
+    ```pipeline prod up```
 
 3. Deploy Checkbox application
 
-```pipeline deploy checkbox.io -i inventory.ini```
+    ```pipeline deploy checkbox.io -i inventory.ini```
 
 4. Deploy iTrust application
 
-```pipeline deploy iTrust -i inventory.ini```
+    ```pipeline deploy iTrust -i inventory.ini```
 
 #### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}/8080/iTrust2*
 
 5. Run canary analysis 
 
-```pipeline canary master broken```
+    ```pipeline canary master broken```
 
 # MILESTONE 3 REPORT
 
