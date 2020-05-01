@@ -4,30 +4,10 @@
     pkg: "{{packages}}"
     state: present
   become: yes
-  
-- name: Create Heartbeat a directory if it does not exist
-  file:
-    path: Heartbeat
-    state: directory
-    mode: '0755'
-
-- name: Copy Heartbeat zip
-  become: yes
-  unarchive: 
-    src: Heartbeat.zip
-    dest: Heartbeat
-    mode: 0777
-    owner: vagrant
-    group: vagrant
-
-- name: Change owner/group of Heartbeat
-  become: yes
-  file:
-    path: Heartbeat
-    recurse: yes
-    mode: 0700
-    owner: vagrant
-    group: vagrant
+  register: result
+  until: result.failed == false
+  delay: 10
+  retries: 15
 
 - name: Copy private key js_rsa
   become: yes
@@ -37,12 +17,6 @@
     mode: 0700
     owner: vagrant
     group: vagrant
-    
-- name: Copy ServerInfo json
-  become: yes
-  copy:
-    src: ../../../serverInfos_VBox.json
-    dest: Heartbeat/servers/serverInfos_VBox.json
 
 - name: Copy Redis Config
   become: yes
@@ -58,54 +32,13 @@
     enabled: yes
   become: yes
 
-- name: Install Forever.
-  npm:
-    name: forever
-    global: yes
-  become: yes
-
 - name: Install global packages
   command: npm install --no-bin-links
   args:
     chdir: /bakerx/cm/canary-analysis/proxy
 
-- name: Install server packages
-  npm:
-    path: Heartbeat/servers
+- name: Clone checkbox.io repo
+  git:
+    repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
+    dest: /home/vagrant/checkbox.io-micro-preview
   become: yes
-
-- name: Install agent packages
-  npm:
-    path: Heartbeat/agent
-  become: yes
-
-- name: Install dashboard packages
-  npm:
-    path: Heartbeat/dashboard
-  become: yes
-
-# - name: Push agents to remote servers
-#   shell: nodejs Heartbeat/servers/index.js push
-
-- name: "Start Monitor server"
-  command: forever start Heartbeat//dashboard/bin/www
-
-# - name: "Install forever (to run Node.js app)."
-#   npm: name=forever global=yes state=present
-
-# - name: "Check list of Node.js apps running."
-#   command: forever list
-#   register: forever_list
-
-# - name: "Start proxy server"
-#   command: forever start /bakerx/cm/canary-analysis/proxy/servers/index.js serve
-#   when: "forever_list.stdout.find('/bakerx/cm/canary-analysis/proxy/servers/index') == -1"
-
-#   - name: "Start proxy server"
-#   command: forever start index.js serve
-
-# - name: Clone checkbox.io repo
-#   git:
-#     repo: https://github.com/chrisparnin/checkbox.io-micro-preview.git
-#     dest: /home/vagrant/checkbox.io-micro-preview
-#   become: yes

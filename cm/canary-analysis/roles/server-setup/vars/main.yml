@@ -1,11 +1,5 @@
 ---
 packages:
   - python3-pip
-  # - openjdk-8-jdk
-  # - mongodb
-  - nodejs
   - nginx
-  # - mysql-server
-  # - libmysql-java
-  # - maven
   - redis-server

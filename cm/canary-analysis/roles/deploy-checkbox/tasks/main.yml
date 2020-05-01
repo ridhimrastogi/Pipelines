@@ -28,3 +28,15 @@
   command: pm2 start index.js
   args:
     chdir: /home/vagrant/checkbox.io-micro-preview
+
+- name: "Check list of Node.js apps running."
+  command: forever stopall
+  register: forever_list
+
+- name: "Start agent on blue"
+  command: forever start /bakerx/cm/canary-analysis/proxy/agent/index.js blue
+  when: inventory_hostname == "192.168.44.25"
+
+- name: "Start agenton green"
+  command: forever start /bakerx/cm/canary-analysis/proxy/agent/index.js green
+  when: inventory_hostname == "192.168.44.30"

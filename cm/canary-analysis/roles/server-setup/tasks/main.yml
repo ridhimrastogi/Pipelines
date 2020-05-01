@@ -88,11 +88,6 @@
     update_cache: yes
   become: yes
 
-# - name: Install chrome binary
-#   apt:
-#     deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-#   become: yes
-
 - name: start nginx
   service:
     name: nginx

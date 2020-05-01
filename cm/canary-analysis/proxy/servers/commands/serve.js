@@ -45,7 +45,7 @@ class Production
         let server  = http.createServer(function(req, res)
         {
             // callback for redirecting requests.
-            proxy.web( req, res, {target: self.TARGET } );
+            proxy.web( req, res, {target: self.TARGET, timeout: 10000, proxyTimeout: 10000 } );
         });
         server.listen(3080);
    }
