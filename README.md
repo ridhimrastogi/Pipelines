@@ -51,6 +51,8 @@ This command setups the production environment for iTrust, deploys the applictio
 5. Run canary analysis 
 
     ```pipeline canary master broken```
+    
+ This command performs canary analysis on the given branches.   
 
 # MILESTONE 3 REPORT
 
