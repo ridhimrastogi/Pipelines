@@ -20,6 +20,9 @@ To run mutation testing on iTrust test suite use command: ```pipeline useful-tes
 
 To start build for checkbox.io use command: ```pipeline build checkbox.io```
 
+# MILESTONE 3 REPORT
+
+- **Monitor Control Plane:** The main issue during this phase of development was getting the Monitor/Heartbeat planes to work properly in the differnent environments, DigtialOcean and Virtual Box. The Monitor plane setup for the DigitalOcean was fairly straight forward using the pre-existing codebase from the Monitor workshop. However, the memory usage seems to always be ~90% usage dispite using several parameters from the [SystemInformation library.](https://www.npmjs.com/package/systeminformation#4-memory) The Heartbeat monitoring for th canary data collection was a bit more difficult to implement due to some confusion about what private key to use, insecure_private_key or baker_rsa, in addition to which user to use, root or vagrant. Also, since the program plane had changed, the name of the key alias on the remote server, so the scp.js and ssh.js files had to be updated as well. After these issues were resolved, collecting and reporting CPU and Memory Usage metrics were straight forward.
 
 # CHECKPOINTS
 
