@@ -62,7 +62,7 @@ class Production
 		setTimeout(() => {
 			clearInterval(this.timer);
 			this.generateReport();
-		},30000);
+		},300000);
 
    }
 
@@ -136,7 +136,7 @@ async function run() {
 	prod.proxy();
 	console.log(chalk`{blueBright Generating traffic for blue canary}`);
 	//generate traffic on blue canary for 5 minutes
-	setTimeout(() => { prod.canaryAnalysis(); },30000);
+	setTimeout(() => { prod.canaryAnalysis(); },300000);
 }
 
 //module.exports = new Production();
