@@ -75,6 +75,8 @@ class Production
 	   let greenCount = 0;
 	   let lastBlueResponseCode = "";
 	   let lastGreenResponseCode = "";
+	   let blueCanaryScore = 0;
+	   let greenCanaryScore = 0;
 	   row.forEach(x => {
 			let cols =  x.split(" ");
 			if(cols[0] == 'blue'){
@@ -91,8 +93,19 @@ class Production
 
 	   avgBlueCpuLoad = Math.round(avgBlueCpuLoad/blueCount);
 	   avgGreenCpuLoad = Math.round(avgGreenCpuLoad/greenCount);
-	   console.log(chalk`{blueBright BLUE CANARY\t AVG_CPULOAD: ${avgBlueCpuLoad} LAST_RESPONSE_CODE: ${lastBlueResponseCode}}`);
-	   console.log(chalk`{green GREEN CANARY\t AVG_CPULOAD: ${avgGreenCpuLoad} LAST_RESPONSE_CODE: ${lastGreenResponseCode}}`);
+
+	   //Compute blue instance score
+	   blueCanaryScore = lastBlueResponseCode == 200 ? 2: 0;
+	   if(avgBlueCpuLoad < 80)
+			blueCanaryScore++;
+
+		//Compute green instance score
+		greenCanaryScore = lastBlueResponseCode == 200 ? 2: 0;
+		if(avgGreenCpuLoad < 80)
+			greenCanaryScore++;
+
+	   console.log(chalk`{blueBright BLUE_INSTANCE\t AVG_CPULOAD: ${avgBlueCpuLoad} LAST_RESPONSE_CODE: ${lastBlueResponseCode}} SCORE: ${blueCanaryScore}`);
+	   console.log(chalk`{green GREEN_INSTANCE\t AVG_CPULOAD: ${avgGreenCpuLoad} LAST_RESPONSE_CODE: ${lastGreenResponseCode}} SCORE: ${greenCanaryScore}`);
 
 	   console.log("======================================================");
 	   if(lastGreenResponseCode == lastBlueResponseCode &&
