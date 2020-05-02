@@ -31,12 +31,15 @@ This command creates the ansible and jenkins VM on your local machine.
     
 This command creates the mointor, checkbox and iTrust servers on Digital Ocean. It also configures the monitor server.    
 
+#### - *Note: The monitor dashboard gets deployed on http://{monitor_ip_address}:8080*
+ 
 3. Deploy Checkbox application
 
     ```pipeline deploy checkbox.io -i inventory.ini```
     
  This command setups the production environment for checkbox, deploys the appliction. It also starts the metric collection from checkbox.io server.
  
+ #### - *Note: The checkbox application gets deployed on http://{checkbox_ip_address}*
  #### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the checkbox application still gets deployed without any errors.*
 
 4. Deploy iTrust application
@@ -45,7 +48,7 @@ This command creates the mointor, checkbox and iTrust servers on Digital Ocean. 
 
 This command setups the production environment for iTrust, deploys the appliction. It also starts the metric collection from iTrust server.
 
-#### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}/8080/iTrust2*
+#### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}:8080/iTrust2*
 #### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the iTrust application still gets deployed without any errors.*
 
 5. Run canary analysis 
