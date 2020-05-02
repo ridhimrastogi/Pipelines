@@ -40,13 +40,6 @@ async function run(project, inventory) {
             process.exit(result.status);
         }
 
-        //add monitor
-        filePath =  '/bakerx/cm/playbook_monitor_push.yml';
-        console.log(chalk.yellow(`Pushing Monitor agent to ${project}`));
-        result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.10');
-        if (result.error) {
-            process.exit(result.status);
-        }
 
     } else if (project == 'iTrust') {
         console.log(project);
@@ -59,21 +52,12 @@ async function run(project, inventory) {
             process.exit(result.status);
         }
 
-        filePath =  '/bakerx/cm/playbook.yml';       
+        filePath =  '/bakerx/cm/playbook.yml';
         console.log(chalk.blueBright(`Deploying ${project}...`));
         result = sshSync(`/bakerx/cm/deploy/deploy-iTrust.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.10');
         if (result.error) {
             process.exit(result.status);
         }
-
-        //add monitor
-        filePath =  '/bakerx/cm/playbook_monitor_push.yml';
-        console.log(chalk.yellow(`Pushing Monitor agent to ${project}`));
-        result = sshSync(`/bakerx/cm/deploy/deploy-monitor.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.10');
-        if (result.error) {
-            process.exit(result.status);
-        }
-
 
     } else {
         console.log("Not yet supported. Try again with checkbox.io or iTrust --gh-user --gh-password")

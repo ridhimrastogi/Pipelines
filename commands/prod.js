@@ -133,4 +133,12 @@ function configureMonitor(){
     if (result.error) {
         process.exit(result.status);
     }
+
+    //add monitor
+    filePath =  '/bakerx/cm/playbook_monitor_push.yml';
+    //console.log(chalk.yellow(`Pushing Monitor agent to ${project}`));
+    result = sshSync(`/bakerx/cm/deploy/start-monitor.sh ${filePath} ${inventory_path}`, 'vagrant@192.168.33.10');
+    if (result.error) {
+        process.exit(result.status);
+    }
 }

@@ -1,4 +1,29 @@
 ---
+- name: add nodejs key.
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  become: yes
+
+- name: update NodeJS Source List.
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_12.x bionic main
+    filename: nodesource
+    update_cache: yes
+    state: present
+  become: yes
+
+- name: Installing required packages.
+  apt:
+    pkg: "{{packages}}"
+    state: present
+  become: yes
+
+- name: apt update.
+  apt:
+    update_cache: false
+  become: yes
+
 - name: Copy package-lock files
   become: yes
   copy:
@@ -12,8 +37,10 @@
     dest: package.json
 
 - name: Install package files
-  npm:
-    path: /root
+  command: npm install -g
+  args:
+    chdir: /root
+  become: yes
 
 - name: Install Forever.
   npm:
