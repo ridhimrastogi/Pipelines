@@ -71,6 +71,7 @@ This command setups the production environment for iTrust, deploys the applictio
 
 - **Canary Analysis**: A major hurdle in the canary analysis was to communicate the metrics collected by the monitoring server with the proxy server. While both servers were configured on the same machine, nodejs makes sharing of variables across files while maintaing their integrity challenging. In the end we wrote the required metrics to a file to overcome this. 
 
+[Milestone-3-Demo](https://drive.google.com/open?id=1adP2v0qtkl_Jw0WGOQkA2p4vzRtFueVg)
 
 # CHECKPOINTS
 
