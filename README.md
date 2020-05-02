@@ -43,8 +43,7 @@ This command creates the mointor, checkbox and iTrust servers on Digital Ocean. 
  
  #### - *Note:* 
 - The checkbox application gets deployed on http://{checkbox_ip_address}
-- The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible server. The path to the inventory file should include '/bakerx/cm/'.   
-- If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the checkbox application still gets deployed without any errors.
+- The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible server. The path to the inventory file should include '/bakerx/cm/'.
 
 4. Deploy iTrust application
 
@@ -54,8 +53,7 @@ This command setups the production environment for iTrust, deploys the applictio
 
 #### - *Note:* 
 - The iTrust application gets deployed on http://{iTrust_ip_address}:8080/iTrust2
-- The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible    server. The path to the inventory file should include '/bakerx/cm/'.    
--  If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the iTrust application still gets deployed without any errors.
+- The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible    server. The path to the inventory file should include '/bakerx/cm/'.
 
 5. Run canary analysis 
 
