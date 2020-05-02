@@ -33,7 +33,7 @@ This command creates the ansible and jenkins VM on your local machine.
 This command creates the mointor, checkbox and iTrust servers on Digital Ocean. It also configures the monitor server.    
 
 #### - *Note:*
-    - The monitor dashboard gets deployed on http://{monitor_ip_address}:8080
+- The monitor dashboard gets deployed on http://{monitor_ip_address}:8080
  
 3. Deploy Checkbox application
 
