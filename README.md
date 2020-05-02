@@ -61,7 +61,7 @@ This command setups the production environment for iTrust, deploys the applictio
 
     ```pipeline canary master broken```
     
- This command performs canary analysis on the given branches. A report is generated and displayed on the console which shows the canary  score. The canary score is computed using the Average CPU Load and the response code received.  
+ This command performs canary analysis on the given branches. A report is generated and displayed on the console which shows the canary  score. The canary score is computed using the Average CPU Load and the response code received. A score of greater than 2 is considered to be passing score. 
 
 # MILESTONE 3 REPORT
 
