@@ -19,9 +19,10 @@
 
     ```pipeline setup --gh-user <GitHub User Name> --gh-pass '<GitHub Password>' --gm-user <Gmail User Name> --gm-pass '<Gmail Password>'```
 
-#### - *Note: --gm-user and --gm-pass are optional fields. If not provided default values will be used*
-#### - *Note: If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for gmail to work*
-#### - *Note:  Single quote around passwords with special characters are expected*
+#### - *Note:* 
+    - --gm-user and --gm-pass are optional fields. If not provided default values will be used
+    - If using your personal gmail account You must enable 'Less secure app access' within your Google Account Security settings for   gmail to work
+    - Single quote around passwords with special characters are expected
 
 This command creates the ansible and jenkins VM on your local machine.
 
@@ -31,7 +32,8 @@ This command creates the ansible and jenkins VM on your local machine.
     
 This command creates the mointor, checkbox and iTrust servers on Digital Ocean. It also configures the monitor server.    
 
-#### - *Note: The monitor dashboard gets deployed on http://{monitor_ip_address}:8080*
+#### - *Note:*
+    - The monitor dashboard gets deployed on http://{monitor_ip_address}:8080
  
 3. Deploy Checkbox application
 
@@ -39,8 +41,10 @@ This command creates the mointor, checkbox and iTrust servers on Digital Ocean. 
     
  This command setups the production environment for checkbox, deploys the appliction. It also starts the metric collection from checkbox.io server.
  
- #### - *Note: The checkbox application gets deployed on http://{checkbox_ip_address}*
- #### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the checkbox application still gets deployed without any errors.*
+ #### - *Note:* 
+    - The checkbox application gets deployed on http://{checkbox_ip_address}
+    - The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible server. The path to the inventory file should include '/bakerx/cm/'.   
+    - If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to  be set up. However, the checkbox application still gets deployed without any errors.
 
 4. Deploy iTrust application
 
@@ -48,18 +52,25 @@ This command creates the mointor, checkbox and iTrust servers on Digital Ocean. 
 
 This command setups the production environment for iTrust, deploys the appliction. It also starts the metric collection from iTrust server.
 
-#### - *Note: The iTrust application gets deployed on http://{iTrust_ip_address}:8080/iTrust2*
-#### - *Note: If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server to be set up. However, the iTrust application still gets deployed without any errors.*
+#### - *Note:* 
+    - The iTrust application gets deployed on http://{iTrust_ip_address}:8080/iTrust2
+    - The inventory file needs to be present inside the "cm" directory to ensure that the inventory file is available on the Ansible     server. The path to the inventory file should include '/bakerx/cm/'.    
+    -  If this command is run before running prod up, the metric collection code will throw error since it requires the monitor server   to be set up. However, the iTrust application still gets deployed without any errors.
 
 5. Run canary analysis 
 
     ```pipeline canary master broken```
     
- This command performs canary analysis on the given branches.   
+ This command performs canary analysis on the given branches. A report is generated and displayed on the console which shows the canary  score. The canary score is computed using the Average CPU Load and the response code received.  
 
 # MILESTONE 3 REPORT
 
 - **Monitor Control Plane:** The main issue during this phase of development was getting the Monitor/Heartbeat planes to work properly in the differnent environments, DigtialOcean and Virtual Box. The Monitor plane setup for the DigitalOcean was fairly straight forward using the pre-existing codebase from the Monitor workshop. However, the memory usage seems to always be ~90% usage dispite using several parameters from the [SystemInformation library.](https://www.npmjs.com/package/systeminformation#4-memory) The Heartbeat monitoring for th canary data collection was a bit more difficult to implement due to some confusion about what private key to use, insecure_private_key or baker_rsa, in addition to which user to use, root or vagrant. Also, since the program plane had changed, the name of the key alias on the remote server, so the scp.js and ssh.js files had to be updated as well. After these issues were resolved, collecting and reporting CPU and Memory Usage metrics were straight forward.
+
+- **Deployment**: The main roadblock for the task was configuring the web servers. The configuration of the Nginx server for the Checkbox.io application was a big task in itself. In order to accomplish this task we had to go to through the Nginx documentation and gain knowledge about the various configuration directives. For Tomcat server, we found the guide at [Digital Ocean](https://www.digitalocean.com/community/tutorials/install-tomcat-9-ubuntu-1804) helpful and accurate, except the part for setting up the Host Manager. An additional challenge for deploying the iTrust application was exporting the MySql database on the iTrust instance.
+
+- **Canary Analysis**: 
+
 
 # CHECKPOINTS
 
